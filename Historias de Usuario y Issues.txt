@@ -1,0 +1,604 @@
+ususario accede al cualquier pc de la empresa con la contraseña que tendran por defecto ejemplo todos los pc tienen muni de contraseña
+luego instantaneamente el software pedira 2 cosas, y no puede hcaer nada mas que cumplir lo que pide el software, ya que el resto del pc estara bloqueado, donde 1 pide que el token este conectado al pc, el sistema debera reconocer el numero de serie del token luego, se le pedira el pin correspondiente el token "token unico que es del usuario", el cual sera validado haciendo envio al backend en el servidor que el dara el paso si esta correcto si no se bloqueara el pc o lo pedira denuevo, luego que acceda, debera registrar todo lo posible del computador quie por ahora pienso en mac del pc ip, datos de la persona, hora global de coneeccion, y luego todo lo mismo pero con hora global de la salida,
+asi se sabra lo que realizo el usuario, todo los daots enviados con el sistema de encriptacion de PKI, asi se mantiene seguro todo, y ya luego cuando se tenga que desarrrollar mas se vera el tema de actividades sospechozas, pero recuerda 1 hay que ver que el pc se pueda configurar para realizar todo lo que quiero de bloquear el pc, yo no se hcaer softwares con instalacion en python, para pcs nuevos, no se como hacer las coneeciones, etc, hay que ver como hacer el scrip, como guardar las PKI, como encriptar el token, como recueprar el numero del seria del token para evitar clonascion del token, ETC
+tener la vista de adminstrador que le asigne el token al empleado, etc.
+
+hacer token barato
+diseñar un complemento de seguridad al logueo de windows
+hacer el software demonio
+la idea es que todos los pcs de la muni tenga 1 contraseña idealmente
+y luego instantaneamente hacer que el software aparerca demonio y pida la coneccion del usb
+y luego el pin correspondiente a ese usb
+lo cual corrobora que esa persona sera el que uso eso
+LUEGO YA MUY APARTE PARA TERMINOS DE MEJORA ES HACER LAS ALERTAS Y REPORTES
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: Recon-USB-Pass
+-----------------------------------------------------------------------------------------
+Repositorio principal del proyecto. Contiene la información general del proyecto, creacion de organizacion repositorios, creacion de historias e issues, incluyendo la descripción del proyecto, objetivos, alcance y documentación inicial. También incluye el software principal versionado de autenticación multifactorial basada en tokens USB y PINs.
+
+**Nombre de la historia:** Crear un instalador básico para el software demonio
+
+**Descripción:**  
+Como administrador de TI, quiero un instalador simple que instale el software demonio en los PCs de los empleados municipales, para que pueda implementar el sistema de autenticación multifactorial.
+
+**Subtareas:**
+- [ ] Investigar herramientas para crear instaladores en Python (por ejemplo, PyInstaller o Inno Setup).
+- [ ] Crear un script Python básico que imprima "Hola Mundo" al ejecutarse.
+- [ ] Empaquetar el script en un instalador ejecutable (.exe).
+- [ ] Probar el instalador en un PC local para verificar que se instala correctamente.
+
+**Criterios de aceptación:**
+- [ ] El instalador debe ejecutarse sin errores en Windows 10/11.
+- [ ] El software demonio debe imprimir "Hola Mundo" después de la instalación.
+- [ ] El instalador debe ser compatible con PCs de diferentes configuraciones.
+
+**Nombre de la historia:** Crear documentación inicial del proyecto
+
+**Descripción:**  
+Como desarrollador, quiero documentar los pasos iniciales del proyecto para tener una referencia clara de cómo configurar el entorno de desarrollo y comprender los objetivos del sistema.
+
+**Subtareas:**
+- [ ] Crear un archivo README.md en el repositorio principal.
+- [ ] Describir brevemente el propósito del proyecto.
+- [ ] Incluir instrucciones para configurar el entorno de desarrollo (por ejemplo, Python versión X, dependencias necesarias).
+- [ ] Añadir un diagrama simple del flujo de trabajo inicial (puede ser texto plano por ahora).
+
+**Criterios de aceptación:**
+- [ ] El archivo README.md debe estar presente en el repositorio.
+- [ ] Las instrucciones deben permitir a otro desarrollador configurar el entorno en menos de 30 minutos.
+- [ ] El diagrama debe reflejar el flujo básico: instalación -> reconocimiento de USB -> envío de datos al backend.
+
+**Nombre de la historia:** Implementar un script básico para bloquear el acceso al sistema operativo
+
+**Descripción:**  
+Como desarrollador, quiero implementar un script que bloquee temporalmente el acceso al sistema operativo hasta que se complete la autenticación, para garantizar que solo usuarios autorizados puedan usar los PCs.
+
+**Subtareas:**
+- [ ] Investigar cómo bloquear el acceso al sistema operativo en Windows (por ejemplo, usando scripts PowerShell o librerías Python como `pywin32`).
+- [ ] Crear un script Python que deshabilite temporalmente el uso del teclado y mouse.
+- [ ] Implementar un mecanismo básico para desbloquear el sistema (por ejemplo, ingresando una contraseña estática temporal).
+- [ ] Probar el script en un entorno controlado para asegurar que funciona correctamente.
+
+**Criterios de aceptación:**
+- [ ] El sistema debe bloquearse inmediatamente después de iniciar sesión con la contraseña común.
+- [ ] El usuario debe poder desbloquear el sistema ingresando una contraseña estática temporal.
+- [ ] El bloqueo no debe afectar procesos críticos del sistema operativo.
+
+**Nombre de la historia:** Diseñar un flujo básico de autenticación multifactorial
+
+**Descripción:**  
+Como arquitecto del sistema, quiero diseñar un flujo básico de autenticación multifactorial que incluya la validación de un USB y un PIN, para garantizar que solo usuarios autorizados puedan acceder al sistema.
+
+**Subtareas:**
+- [ ] Crear un diagrama de flujo que describa el proceso de autenticación:
+  - Paso 1: El usuario inicia sesión con la contraseña común.
+  - Paso 2: El sistema solicita la conexión de un USB.
+  - Paso 3: El sistema valida el número de serie del USB.
+  - Paso 4: El sistema solicita un PIN asociado al USB.
+- [ ] Documentar los puntos clave del flujo en el archivo README.md.
+- [ ] Identificar las bibliotecas o herramientas necesarias para implementar cada paso del flujo.
+- [ ] Crear un prototipo básico que simule el flujo (sin validación real).
+
+**Criterios de aceptación:**
+- [ ] El diagrama de flujo debe estar documentado en el archivo README.md.
+- [ ] El prototipo debe mostrar mensajes simulados para cada paso del flujo.
+- [ ] El flujo debe ser claro y fácil de entender para otros desarrolladores.
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-Agent
+-----------------------------------------------------------------------------------------
+Agente local instalado en los PCs de los empleados municipales. Monitorea las actividades locales, registra logs de operaciones sensibles (CRUD) y envía los datos cifrados al backend para su procesamiento y almacenamiento.
+
+**Nombre de la historia:** Implementar la detección de USBs conectados
+
+**Descripción:**  
+Como desarrollador, quiero que el agente local detecte automáticamente cualquier USB conectado al PC y lea su número de serie, para validar su autenticidad más adelante.
+
+**Subtareas:**
+- [ ] Investigar bibliotecas Python para interactuar con dispositivos USB (por ejemplo, `pyudev` o `pywin32`).
+- [ ] Escribir un script que liste todos los dispositivos USB conectados.
+- [ ] Extraer el número de serie del USB seleccionado.
+- [ ] Probar el script con diferentes USBs para asegurar que funciona correctamente.
+
+**Criterios de aceptación:**
+- [ ] El script debe detectar al menos un USB conectado al sistema.
+- [ ] El número de serie del USB debe ser leído correctamente y mostrado en la consola.
+- [ ] El script debe manejar errores (por ejemplo, si no hay USBs conectados).
+
+**Nombre de la historia:** Implementar registro de logs locales para actividades del USB
+
+**Descripción:**  
+Como desarrollador, quiero que el agente local registre logs locales de las actividades relacionadas con el USB (conexión, desconexión, validación), para tener un historial de eventos en caso de auditoría.
+
+**Subtareas:**
+- [ ] Crear una función que escriba logs en un archivo local (por ejemplo, `logs.txt`).
+- [ ] Registrar eventos como:
+  - Conexión de un USB.
+  - Lectura del número de serie.
+  - Desconexión del USB.
+- [ ] Asegurarse de que los logs incluyan una marca de tiempo.
+- [ ] Probar el registro de logs con diferentes escenarios (conexión/desconexión).
+
+**Criterios de aceptación:**
+- [ ] Los logs deben almacenarse en un archivo local (`logs.txt`) en el mismo directorio del script.
+- [ ] Cada entrada del log debe incluir una marca de tiempo y una descripción clara del evento.
+- [ ] El script debe registrar al menos tres eventos diferentes (conexión, lectura de número de serie, desconexión).
+
+**Nombre de la historia:** Implementar envío de datos del USB al backend (simulación)
+
+**Descripción:**  
+Como desarrollador, quiero que el agente local envíe los datos del USB (número de serie) al backend para su validación, para garantizar que solo tokens autorizados sean usados.
+
+**Subtareas:**
+- [ ] Crear una función que simule el envío de datos a un endpoint del backend.
+- [ ] Usar una biblioteca como `requests` para enviar los datos en formato JSON.
+- [ ] Simular una respuesta del backend (por ejemplo, "validado" o "no validado").
+- [ ] Manejar errores de conexión (por ejemplo, si el backend no está disponible).
+
+**Criterios de aceptación:**
+- [ ] El script debe enviar el número de serie del USB a un endpoint simulado.
+- [ ] La respuesta del backend debe imprimirse en la consola.
+- [ ] El script debe manejar errores de conexión y mostrar un mensaje apropiado.
+
+**Nombre de la historia:** Implementar cifrado básico de datos antes de enviarlos al backend
+
+**Descripción:**  
+Como desarrollador, quiero cifrar los datos sensibles (como el número de serie del USB) antes de enviarlos al backend, para garantizar la seguridad de la información.
+
+**Subtareas:**
+- [ ] Investigar algoritmos de cifrado básicos (por ejemplo, AES o RSA).
+- [ ] Usar una biblioteca como `cryptography` para implementar el cifrado.
+- [ ] Cifrar el número de serie del USB antes de enviarlo al backend.
+- [ ] Descifrar los datos en el backend simulado para verificar que el cifrado funciona.
+
+**Criterios de aceptación:**
+- [ ] El número de serie del USB debe cifrarse antes de ser enviado al backend.
+- [ ] El backend simulado debe descifrar correctamente los datos.
+- [ ] El script debe manejar errores de cifrado y mostrar mensajes claros.
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-BackEnd
+-----------------------------------------------------------------------------------------
+Backend del sistema implementado en el servidor central. Recibe, valida y procesa los datos enviados por el agente local, como logs cifrados y solicitudes de autenticación. También proporciona endpoints para la gestión de usuarios, generación de reportes y visualización de alertas a través del frontend.
+
+**Nombre de la historia:** Crear un endpoint básico para recibir datos del agente local
+
+**Descripción:**  
+Como desarrollador, quiero crear un endpoint en el backend que reciba los datos enviados por el agente local (por ejemplo, el número de serie del USB), para procesarlos y validarlos.
+
+**Subtareas:**
+- [ ] Configurar un servidor básico usando Flask o FastAPI.
+- [ ] Crear un endpoint `/validate_usb` que acepte datos en formato JSON.
+- [ ] Implementar una función que imprima los datos recibidos en la consola.
+- [ ] Probar el endpoint usando herramientas como Postman o cURL.
+
+**Criterios de aceptación:**
+- [ ] El endpoint debe estar disponible en una URL local (por ejemplo, `http://localhost:5000/validate_usb`).
+- [ ] El backend debe imprimir los datos recibidos en la consola.
+- [ ] El endpoint debe responder con un mensaje simple (por ejemplo, "Datos recibidos").
+
+**Nombre de la historia:** Validar el número de serie del USB contra una lista predefinida
+
+**Descripción:**  
+Como desarrollador, quiero validar el número de serie del USB enviado por el agente local contra una lista predefinida de números de serie autorizados, para garantizar que solo tokens válidos sean aceptados.
+
+**Subtareas:**
+- [ ] Crear una lista predefinida de números de serie autorizados (puede ser un archivo JSON o una base de datos simple).
+- [ ] Modificar el endpoint `/validate_usb` para comparar el número de serie recibido con la lista predefinida.
+- [ ] Devolver una respuesta JSON indicando si el número de serie es válido o no.
+- [ ] Probar el endpoint con números de serie válidos e inválidos.
+
+**Criterios de aceptación:**
+- [ ] El backend debe devolver `{"status": "valid"}` si el número de serie está en la lista.
+- [ ] El backend debe devolver `{"status": "invalid"}` si el número de serie no está en la lista.
+- [ ] La lista de números de serie debe ser fácilmente modificable para agregar nuevos tokens.
+
+**Nombre de la historia:** Implementar cifrado básico para descifrar datos recibidos
+
+**Descripción:**  
+Como desarrollador, quiero implementar cifrado básico en el backend para descifrar los datos enviados por el agente local, asegurando que la información sea segura durante la transmisión.
+
+**Subtareas:**
+- [ ] Usar una biblioteca como `cryptography` para implementar el descifrado.
+- [ ] Modificar el endpoint `/validate_usb` para descifrar el número de serie recibido.
+- [ ] Validar el número de serie descifrado contra la lista predefinida.
+- [ ] Probar el cifrado/descifrado con datos simulados.
+
+**Criterios de aceptación:**
+- [ ] El backend debe descifrar correctamente el número de serie recibido.
+- [ ] El número de serie descifrado debe validarse contra la lista predefinida.
+- [ ] El endpoint debe manejar errores de descifrado y devolver un mensaje apropiado.
+
+**Nombre de la historia:** Registrar logs de actividad en una base de datos simple
+
+**Descripción:**  
+Como desarrollador, quiero registrar los logs de actividad (como intentos de validación de USB) en una base de datos simple, para tener un historial de eventos accesible.
+
+**Subtareas:**
+- [ ] Configurar una base de datos SQLite para almacenar logs.
+- [ ] Crear una tabla `logs` con campos como `id`, `timestamp`, `usb_serial`, `status`.
+- [ ] Modificar el endpoint `/validate_usb` para insertar un registro en la base de datos cada vez que se recibe un número de serie.
+- [ ] Probar la inserción de logs consultando directamente la base de datos.
+
+**Criterios de aceptación:**
+- [ ] La tabla `logs` debe existir en la base de datos SQLite.
+- [ ] Cada intento de validación debe insertar un registro en la tabla `logs`.
+- [ ] Los registros deben incluir al menos el número de serie, el estado (`valid` o `invalid`) y una marca de tiempo.
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-FrontEnd
+-----------------------------------------------------------------------------------------
+Interfaz gráfica web para administradores. Permite gestionar usuarios, configurar tokens USB, visualizar logs, generar reportes personalizados y monitorear alertas en tiempo real. Es la capa de interacción principal para los administradores del sistema.
+
+**Nombre de la historia:** Crear una interfaz básica para listar tokens USB autorizados
+
+**Descripción:**  
+Como administrador, quiero ver una lista de todos los tokens USB autorizados en el sistema, para tener un control claro sobre los dispositivos permitidos.
+
+**Subtareas:**
+- [ ] Configurar un proyecto básico usando un framework frontend como React o Vue.js.
+- [ ] Crear una página simple con una tabla que muestre los números de serie autorizados.
+- [ ] Obtener la lista de tokens desde el backend (endpoint simulado).
+- [ ] Mostrar los datos en una tabla con columnas como "ID", "Número de Serie" y "Estado".
+
+**Criterios de aceptación:**
+- [ ] La tabla debe mostrar al menos tres tokens USB autorizados.
+- [ ] Los datos deben cargarse dinámicamente desde el backend.
+- [ ] La interfaz debe ser funcional y visualmente clara.
+
+**Nombre de la historia:** Implementar una función para agregar nuevos tokens USB
+
+**Descripción:**  
+Como administrador, quiero poder agregar nuevos tokens USB al sistema a través de la interfaz web, para expandir la lista de dispositivos autorizados.
+
+**Subtareas:**
+- [ ] Añadir un formulario en la interfaz con un campo para ingresar el número de serie del token.
+- [ ] Crear un botón "Agregar Token" que envíe el número de serie al backend.
+- [ ] Usar una solicitud POST para enviar los datos al endpoint correspondiente.
+- [ ] Actualizar la tabla automáticamente después de agregar un nuevo token.
+
+**Criterios de aceptación:**
+- [ ] El formulario debe permitir ingresar un número de serie válido.
+- [ ] El backend debe recibir y procesar correctamente el número de serie.
+- [ ] La tabla debe actualizarse automáticamente para reflejar el nuevo token.
+
+**Nombre de la historia:** Crear una vista básica para visualizar logs de actividad
+
+**Descripción:**  
+Como administrador, quiero ver una lista de logs de actividad relacionados con los intentos de validación de USB, para monitorear el uso del sistema.
+
+**Subtareas:**
+- [ ] Crear una nueva página en la interfaz web llamada "Logs".
+- [ ] Obtener los logs desde el backend (endpoint simulado).
+- [ ] Mostrar los logs en una tabla con columnas como "ID", "Timestamp", "Número de Serie" y "Estado".
+- [ ] Ordenar los logs por fecha de forma descendente.
+
+**Criterios de aceptación:**
+- [ ] La tabla debe mostrar al menos cinco registros de logs.
+- [ ] Los datos deben cargarse dinámicamente desde el backend.
+- [ ] Los logs deben estar ordenados por fecha de forma descendente.
+
+**Nombre de la historia:** Implementar un filtro básico para los logs de actividad
+
+**Descripción:**  
+Como administrador, quiero filtrar los logs de actividad por estado (`valid` o `invalid`) para analizar específicamente los intentos fallidos o exitosos.
+
+**Subtareas:**
+- [ ] Añadir un menú desplegable o botones de filtro en la página de logs.
+- [ ] Permitir filtrar los logs por estado (`valid`, `invalid` o `todos`).
+- [ ] Enviar el filtro seleccionado al backend para obtener los logs correspondientes.
+- [ ] Actualizar la tabla dinámicamente según el filtro aplicado.
+
+**Criterios de aceptación:**
+- [ ] El filtro debe permitir seleccionar entre `valid`, `invalid` y `todos`.
+- [ ] La tabla debe actualizarse automáticamente según el filtro aplicado.
+- [ ] El backend debe recibir el filtro y devolver los logs correspondientes.
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-DataBase
+-----------------------------------------------------------------------------------------
+Base de datos relacional (PostgreSQL) que almacena los logs de actividad, información de usuarios, datos de tokens USB, certificados y otros registros relevantes. Garantiza la integridad, seguridad y disponibilidad de los datos mediante cifrado y políticas de acceso.
+
+**Nombre de la historia:** Crear una estructura básica de la base de datos
+
+**Descripción:**  
+Como desarrollador, quiero definir una estructura inicial de la base de datos para almacenar información crítica del sistema, como tokens USB autorizados y logs de actividad.
+
+**Subtareas:**
+- [ ] Elegir PostgreSQL como sistema de gestión de base de datos.
+- [ ] Crear una base de datos llamada `rusbp_db`.
+- [ ] Definir las siguientes tablas:
+  - `tokens`: Almacena los números de serie autorizados.
+    - Columnas: `id` (PK), `serial_number`, `status`, `created_at`.
+  - `logs`: Almacena los registros de actividad.
+    - Columnas: `id` (PK), `timestamp`, `usb_serial`, `status`.
+- [ ] Usar un script SQL para crear las tablas.
+
+**Criterios de aceptación:**
+- [ ] La base de datos `rusbp_db` debe existir.
+- [ ] Las tablas `tokens` y `logs` deben estar creadas con las columnas especificadas.
+- [ ] El script SQL debe ejecutarse sin errores.
+
+**Nombre de la historia:** Implementar inserción básica de datos en la tabla `tokens`
+
+**Descripción:**  
+Como desarrollador, quiero insertar datos iniciales en la tabla `tokens` para simular tokens USB autorizados, para probar la funcionalidad básica de la base de datos.
+
+**Subtareas:**
+- [ ] Crear un script SQL para insertar al menos tres tokens USB autorizados en la tabla `tokens`.
+- [ ] Asegurarse de que cada token tenga un número de serie único y un estado (`active` o `inactive`).
+- [ ] Probar la inserción consultando directamente la tabla `tokens`.
+
+**Criterios de aceptación:**
+- [ ] La tabla `tokens` debe contener al menos tres registros.
+- [ ] Cada registro debe tener un número de serie único y un estado válido.
+- [ ] Los datos deben ser recuperables mediante una consulta SQL.
+
+**Nombre de la historia:** Implementar inserción básica de datos en la tabla `logs`
+
+**Descripción:**  
+Como desarrollador, quiero insertar datos simulados en la tabla `logs` para probar el registro de intentos de validación de USB.
+
+**Subtareas:**
+- [ ] Crear un script SQL para insertar al menos cinco registros de logs en la tabla `logs`.
+- [ ] Incluir datos como `timestamp`, `usb_serial` y `status` (`valid` o `invalid`).
+- [ ] Probar la inserción consultando directamente la tabla `logs`.
+
+**Criterios de aceptación:**
+- [ ] La tabla `logs` debe contener al menos cinco registros.
+- [ ] Cada registro debe incluir un `timestamp`, un `usb_serial` y un `status`.
+- [ ] Los datos deben ser recuperables mediante una consulta SQL.
+
+**Nombre de la historia:** Implementar cifrado básico para datos sensibles en la base de datos
+
+**Descripción:**  
+Como desarrollador, quiero cifrar los datos sensibles almacenados en la base de datos (como números de serie de tokens) para garantizar su seguridad.
+
+**Subtareas:**
+- [ ] Investigar bibliotecas o funciones de cifrado en PostgreSQL (por ejemplo, `pgcrypto`).
+- [ ] Modificar la tabla `tokens` para almacenar los números de serie cifrados.
+- [ ] Crear funciones para cifrar y descifrar datos en la base de datos.
+- [ ] Probar el cifrado/descifrado insertando y recuperando datos.
+
+**Criterios de aceptación:**
+- [ ] Los números de serie en la tabla `tokens` deben estar cifrados.
+- [ ] Las funciones de cifrado/descifrado deben funcionar correctamente.
+- [ ] Los datos descifrados deben coincidir con los originales.
+
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-Infraestructure
+-----------------------------------------------------------------------------------------
+Repositorio que centraliza la gestión de la infraestructura tecnológica del sistema, incluyendo la infraestructura de clave pública (PKI), configuraciones de Docker, pipelines CI/CD, scripts de despliegue y herramientas para garantizar la seguridad y operatividad del sistema.
+
+**Nombre de la historia:** Configurar un entorno local con Docker para el backend y la base de datos
+
+**Descripción:**  
+Como desarrollador, quiero configurar un entorno local usando Docker para ejecutar el backend y la base de datos PostgreSQL, para facilitar el desarrollo y las pruebas.
+
+**Subtareas:**
+- [ ] Crear un archivo `Dockerfile` para el backend.
+- [ ] Crear un archivo `docker-compose.yml` para definir los servicios:
+  - Servicio `backend`: Ejecuta la aplicación Flask/FastAPI.
+  - Servicio `db`: Ejecuta PostgreSQL.
+- [ ] Configurar las variables de entorno necesarias (por ejemplo, credenciales de la base de datos).
+- [ ] Probar el entorno local ejecutando ambos servicios con `docker-compose up`.
+
+**Criterios de aceptación:**
+- [ ] El archivo `docker-compose.yml` debe iniciar correctamente ambos servicios.
+- [ ] El backend debe conectarse a la base de datos PostgreSQL.
+- [ ] Los logs deben mostrar que ambos servicios están funcionando sin errores.
+
+**Nombre de la historia:** Implementar una PKI básica para cifrado y autenticación
+
+**Descripción:**  
+Como desarrollador, quiero implementar una Infraestructura de Clave Pública (PKI) básica para gestionar certificados digitales, asegurando la autenticación y el cifrado en el sistema.
+
+**Subtareas:**
+- [ ] Investigar herramientas como OpenSSL para crear certificados.
+- [ ] Generar un par de claves (pública y privada) para el servidor.
+- [ ] Crear un certificado raíz (CA) y firmar los certificados del servidor.
+- [ ] Configurar el backend para usar HTTPS con los certificados generados.
+
+**Criterios de aceptación:**
+- [ ] Los certificados deben estar generados y almacenados en un directorio seguro.
+- [ ] El backend debe ejecutarse con HTTPS habilitado usando los certificados.
+- [ ] Las conexiones al backend deben ser seguras (verificadas con un navegador o herramienta como Postman).
+
+**Nombre de la historia:** Configurar scripts básicos para despliegue en producción
+
+**Descripción:**  
+Como desarrollador, quiero crear scripts básicos para automatizar el despliegue del sistema en un entorno de producción, asegurando que el proceso sea reproducible y eficiente.
+
+**Subtareas:**
+- [ ] Crear un script Bash/PowerShell para instalar dependencias necesarias (por ejemplo, Docker, Python).
+- [ ] Crear un script para desplegar el backend y la base de datos usando `docker-compose`.
+- [ ] Asegurarse de que los scripts incluyan pasos para configurar variables de entorno.
+- [ ] Probar los scripts en un entorno simulado de producción.
+
+**Criterios de aceptación:**
+- [ ] Los scripts deben ejecutarse sin errores en un entorno limpio.
+- [ ] El sistema debe estar completamente operativo después de ejecutar los scripts.
+- [ ] Los scripts deben ser fáciles de entender y modificar.
+
+**Nombre de la historia:** Implementar copias de seguridad automáticas para la base de datos
+
+**Descripción:**  
+Como administrador de sistemas, quiero implementar copias de seguridad automáticas para la base de datos PostgreSQL, para evitar la pérdida de datos críticos.
+
+**Subtareas:**
+- [ ] Crear un script para realizar copias de seguridad de la base de datos (por ejemplo, usando `pg_dump`).
+- [ ] Configurar un cron job (Linux) o tarea programada (Windows) para ejecutar el script diariamente.
+- [ ] Almacenar las copias de seguridad en un directorio seguro.
+- [ ] Probar la restauración de una copia de seguridad para verificar su integridad.
+
+**Criterios de aceptación:**
+- [ ] El script debe generar copias de seguridad sin errores.
+- [ ] Las copias de seguridad deben almacenarse en un directorio seguro.
+- [ ] La restauración de una copia de seguridad debe ser exitosa.
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-Testing
+-----------------------------------------------------------------------------------------
+Pruebas unitarias, de integración y de aceptación para asegurar el correcto funcionamiento del sistema. Incluye casos de prueba automatizados, simulaciones de escenarios de uso y validaciones de seguridad.
+
+**Nombre de la historia:** Crear pruebas unitarias básicas para el backend
+
+**Descripción:**  
+Como desarrollador, quiero implementar pruebas unitarias básicas para los endpoints del backend, para asegurar que las funciones principales funcionen correctamente.
+
+**Subtareas:**
+- [ ] Configurar un framework de pruebas como `pytest` o `unittest`.
+- [ ] Escribir pruebas unitarias para el endpoint `/validate_usb`:
+  - Prueba 1: Validar un número de serie autorizado.
+  - Prueba 2: Validar un número de serie no autorizado.
+  - Prueba 3: Manejar errores (por ejemplo, datos mal formados).
+- [ ] Ejecutar las pruebas y verificar que pasen correctamente.
+
+**Criterios de aceptación:**
+- [ ] Las pruebas unitarias deben cubrir al menos tres escenarios diferentes.
+- [ ] Todas las pruebas deben pasar sin errores.
+- [ ] El código de prueba debe estar bien documentado.
+
+**Nombre de la historia:** Crear pruebas de integración para el flujo de autenticación
+
+**Descripción:**  
+Como desarrollador, quiero implementar pruebas de integración para simular el flujo completo de autenticación, desde la detección del USB hasta la validación en el backend.
+
+**Subtareas:**
+- [ ] Simular la conexión de un USB usando datos ficticios.
+- [ ] Probar el envío del número de serie al backend.
+- [ ] Verificar que el backend responda correctamente (`valid` o `invalid`).
+- [ ] Probar el manejo de errores (por ejemplo, backend no disponible).
+
+**Criterios de aceptación:**
+- [ ] La prueba debe simular el flujo completo de autenticación.
+- [ ] El backend debe responder correctamente a los datos enviados.
+- [ ] La prueba debe cubrir al menos dos escenarios: éxito y fallo.
+
+**Nombre de la historia:** Implementar pruebas de seguridad básica
+
+**Descripción:**  
+Como desarrollador, quiero implementar pruebas de seguridad básicas para identificar vulnerabilidades comunes en el sistema, como inyecciones SQL o exposición de datos sensibles.
+
+**Subtareas:**
+- [ ] Usar herramientas como `sqlmap` o `OWASP ZAP` para probar vulnerabilidades.
+- [ ] Probar inyecciones SQL en los endpoints del backend.
+- [ ] Verificar que los datos sensibles estén cifrados durante la transmisión.
+- [ ] Documentar los hallazgos y sugerir mejoras.
+
+**Criterios de aceptación:**
+- [ ] Las pruebas deben identificar (o confirmar la ausencia de) vulnerabilidades comunes.
+- [ ] Los datos sensibles deben estar cifrados durante la transmisión.
+- [ ] Los hallazgos deben estar documentados con sugerencias claras.
+
+**Nombre de la historia:** Crear pruebas de aceptación para validar el sistema completo
+
+**Descripción:**  
+Como equipo de QA, quiero crear pruebas de aceptación para validar que el sistema cumple con los requisitos funcionales y no funcionales definidos.
+
+**Subtareas:**
+- [ ] Definir casos de prueba basados en los requisitos iniciales:
+  - Caso 1: Un usuario autorizado puede iniciar sesión con un USB válido.
+  - Caso 2: Un usuario no autorizado no puede iniciar sesión con un USB inválido.
+  - Caso 3: El sistema registra logs correctamente.
+- [ ] Automatizar las pruebas usando herramientas como Selenium o Postman.
+- [ ] Ejecutar las pruebas en un entorno simulado de producción.
+- [ ] Documentar los resultados de las pruebas.
+
+**Criterios de aceptación:**
+- [ ] Las pruebas deben cubrir al menos tres casos de uso críticos.
+- [ ] Todas las pruebas deben pasar en un entorno simulado.
+- [ ] Los resultados deben estar documentados claramente.
+
+________________________________________________________________________________________________________________________________________________________________________________________________________________________
+-----------------------------------------------------------------------------------------
+Repositorio: RUSBP-Documentation
+-----------------------------------------------------------------------------------------
+Documentación completa del proyecto. Incluye manuales técnicos, guías de usuario, diagramas arquitectónicos, especificaciones de diseño, procedimientos de implementación y cualquier otro recurso necesario para el desarrollo, despliegue y mantenimiento del sistema.
+
+**Nombre de la historia:** Crear una estructura inicial de la documentación
+
+**Descripción:**  
+Como desarrollador, quiero crear una estructura inicial para la documentación del proyecto, para organizar toda la información relevante de manera clara y accesible.
+
+**Subtareas:**
+- [ ] Crear un archivo `README.md` con una descripción general del proyecto.
+- [ ] Definir una estructura de carpetas para la documentación:
+  - `/architecture`: Diagramas arquitectónicos y flujos de trabajo.
+  - `/technical`: Manuales técnicos y especificaciones.
+  - `/user-guides`: Guías de usuario para administradores y empleados.
+  - `/deployment`: Instrucciones para despliegue y configuración.
+- [ ] Añadir un archivo `index.md` en cada carpeta con una breve descripción.
+
+**Criterios de aceptación:**
+- [ ] La estructura de carpetas debe estar creada y organizada.
+- [ ] Cada carpeta debe contener al menos un archivo `index.md`.
+- [ ] El archivo `README.md` debe proporcionar una visión general del proyecto.
+
+**Nombre de la historia:** Documentar los diagramas arquitectónicos iniciales
+
+**Descripción:**  
+Como arquitecto del sistema, quiero documentar los diagramas arquitectónicos iniciales para visualizar cómo interactúan los diferentes componentes del sistema.
+
+**Subtareas:**
+- [ ] Crear un diagrama de flujo básico que muestre el proceso de autenticación:
+  - Paso 1: Conexión del USB.
+  - Paso 2: Validación del número de serie.
+  - Paso 3: Envío de datos al backend.
+- [ ] Crear un diagrama de componentes que muestre las relaciones entre:
+  - Agente local (`RUSBP-Agent`).
+  - Backend (`RUSBP-BackEnd`).
+  - Base de datos (`RUSBP-DataBase`).
+  - Frontend (`RUSBP-FrontEnd`).
+- [ ] Guardar los diagramas en la carpeta `/architecture`.
+
+**Criterios de aceptación:**
+- [ ] Los diagramas deben estar guardados en formato PNG o SVG.
+- [ ] Los diagramas deben ser claros y fáciles de entender.
+- [ ] La carpeta `/architecture` debe contener al menos dos diagramas.
+
+**Nombre de la historia:** Crear una guía técnica inicial para desarrolladores
+
+**Descripción:**  
+Como desarrollador, quiero crear una guía técnica inicial para facilitar la configuración del entorno de desarrollo y comprender la arquitectura del sistema.
+
+**Subtareas:**
+- [ ] Escribir una guía paso a paso para configurar el entorno de desarrollo:
+  - Instalación de Python y dependencias.
+  - Configuración de Docker y PostgreSQL.
+  - Ejecución del backend y frontend.
+- [ ] Documentar las bibliotecas y herramientas principales utilizadas en el proyecto.
+- [ ] Incluir instrucciones para ejecutar las pruebas unitarias y de integración.
+- [ ] Guardar la guía en la carpeta `/technical`.
+
+**Criterios de aceptación:**
+- [ ] La guía debe cubrir al menos tres aspectos clave: configuración, herramientas y pruebas.
+- [ ] Las instrucciones deben ser claras y reproducibles.
+- [ ] La carpeta `/technical` debe contener al menos un archivo de guía técnica.
+
+**Nombre de la historia:** Crear una guía de usuario básica para administradores
+
+**Descripción:**  
+Como desarrollador, quiero crear una guía de usuario básica para administradores, para que puedan gestionar tokens USB, visualizar logs y generar reportes desde el frontend.
+
+**Subtareas:**
+- [ ] Escribir una guía paso a paso para:
+  - Agregar nuevos tokens USB autorizados.
+  - Visualizar logs de actividad.
+  - Filtrar logs por estado (`valid` o `invalid`).
+- [ ] Incluir capturas de pantalla de la interfaz web para facilitar la comprensión.
+- [ ] Guardar la guía en la carpeta `/user-guides`.
+
+**Criterios de aceptación:**
+- [ ] La guía debe cubrir al menos tres funcionalidades clave del frontend.
+- [ ] Las capturas de pantalla deben ser claras y relevantes.
+- [ ] La carpeta `/user-guides` debe contener al menos un archivo de guía de usuario.
+
+-----------------------------------------------------------------------------------------
