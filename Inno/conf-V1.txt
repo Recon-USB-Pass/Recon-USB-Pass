@@ -1,0 +1,22 @@
+[Setup]
+AppName=RUSBP-V1
+AppVersion=1.0
+DefaultDirName={pf}\RUSBP-V1
+DefaultGroupName=RUSBP-V1
+OutputDir=RUSBP-Vx-Inno
+OutputBaseFilename=RUSBP-V1-Installer
+Compression=lzma
+SolidCompression=yes
+DisableDirPage=yes
+DisableProgramGroupPage=yes
+
+[Files]
+Source: "dist\hola_mundo.exe"
+
+[Icons]
+Name: "{group}\RUSBP-V1"
+
+[Registry]
+
+[Run]
+Filename: "{app}\hola_mundo.exe"
