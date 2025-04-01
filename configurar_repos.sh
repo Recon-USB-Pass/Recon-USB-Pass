@@ -1,5 +1,11 @@
 #!/bin/bash
 
+cd ..
+
+# Configura tu usuario y email en Git
+git config --global user.name "zaratechacana"
+git config --global user.email "zaratechacana@gmail.com"
+
 #Clonar los repositorios de Recon-USB-Pass
 git clone https://github.com/Recon-USB-Pass/RUSBP-Agent.git
 git clone https://github.com/Recon-USB-Pass/RUSBP-BackEnd.git
@@ -8,10 +14,6 @@ git clone https://github.com/Recon-USB-Pass/RUSBP-DataBase.git
 git clone https://github.com/Recon-USB-Pass/RUSBP-Infraestructure.git
 git clone https://github.com/Recon-USB-Pass/RUSBP-Testing.git
 git clone https://github.com/Recon-USB-Pass/RUSBP-Documentation.git
-
-# Configura tu usuario y email en Git
-git config --global user.name "zaratechacana"
-git config --global user.email "zaratechacana@gmail.com"
 
 # Lista de repositorios clonados
 repos=(
@@ -25,7 +27,6 @@ repos=(
 )
 
 # Configurar cada repositorio
-cd ..
 
 for repo in "${repos[@]}"; do
     echo "Configurando $repo..."
