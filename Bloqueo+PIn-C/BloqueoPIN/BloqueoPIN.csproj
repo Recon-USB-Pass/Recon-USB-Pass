@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsForms">
+
+  <!-- ConfiguraciÃ³n BÃ¡sica del Proyecto -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>           <!-- Tipo de salida: AplicaciÃ³n de escritorio -->
+    <TargetFramework>net9.0-windows</TargetFramework> <!-- VersiÃ³n de .NET y compatibilidad con Windows -->
+    <UseWindowsForms>true</UseWindowsForms>   <!-- Habilitar soporte para Windows Forms -->
+    <ImplicitUsings>enable</ImplicitUsings>   <!-- Habilitar directivas 'using' implÃ­citas -->
+    <Nullable>enable</Nullable>               <!-- Habilitar soporte para tipos anulables -->
+  </PropertyGroup>
+
+  <!-- Referencias a Paquetes Necesarios -->
+  <ItemGroup>
+    <PackageReference Include="System.Windows.Forms" Version="9.0.202" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.202" />
+  </ItemGroup>
+
+  <!-- Framework Reference (Opcional) -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+  </ItemGroup>
+
+</Project>

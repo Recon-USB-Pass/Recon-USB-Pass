@@ -1,0 +1,5 @@
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo+PIn-C\obj\Debug\net9.0\Bloqueo+PIn-C.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo+PIn-C\obj\Debug\net9.0\Bloqueo+PIn-C.AssemblyInfoInputs.cache
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo+PIn-C\obj\Debug\net9.0\Bloqueo+PIn-C.AssemblyInfo.cs
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo+PIn-C\obj\Debug\net9.0\Bloqueo+PIn-C.csproj.CoreCompileInputs.cache
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo+PIn-C\obj\Debug\net9.0\Bloqueo+PIn-C.sourcelink.json

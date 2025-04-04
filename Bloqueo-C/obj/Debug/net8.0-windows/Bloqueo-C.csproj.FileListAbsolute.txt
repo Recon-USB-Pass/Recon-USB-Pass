@@ -1,0 +1,15 @@
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\bin\Debug\net8.0-windows\Bloqueo-C.exe
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\bin\Debug\net8.0-windows\Bloqueo-C.deps.json
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\bin\Debug\net8.0-windows\Bloqueo-C.runtimeconfig.json
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\bin\Debug\net8.0-windows\Bloqueo-C.dll
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\bin\Debug\net8.0-windows\Bloqueo-C.pdb
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.AssemblyInfoInputs.cache
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.AssemblyInfo.cs
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.csproj.CoreCompileInputs.cache
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.sourcelink.json
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.dll
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\refint\Bloqueo-C.dll
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.pdb
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\Bloqueo-C.genruntimeconfig.cache
+C:\Users\RUSBP\Desktop\Recon-USB-Pass\Recon-USB-Pass\Bloqueo-C\obj\Debug\net8.0-windows\ref\Bloqueo-C.dll

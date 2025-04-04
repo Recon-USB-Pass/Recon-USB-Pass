@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "W4aEB4gB2rs=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\Bloqueo+PIn-C\\BloqueoPIN\\BloqueoPIN.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\RUSBP\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
+    "C:\\Users\\RUSBP\\.nuget\\packages\\system.drawing.common\\6.0.0\\system.drawing.common.6.0.0.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1102",
+      "level": "Error",
+      "message": "No se encuentra el paquete System.Windows.Forms con la versión (>= 6.0.0)\r\n  - Versiones encontradas en nuget.org: 1 [ versión más cercana: 4.0.0 ]",
+      "libraryId": "System.Windows.Forms",
+      "targetGraphs": [
+        "net9.0-windows7.0"
+      ]
+    }
+  ]
+}
