@@ -136,7 +136,8 @@ namespace Bloqueo_C
                 Keys.Tab, // Tab
                 Keys.R,   // R
                 Keys.LWin, // Tecla Windows
-                Keys.Down  // Flecha abajo
+                Keys.Down,  // Flecha abajo
+                Keys.L  // L
             };
 
             if (Array.Exists(teclasBloqueadas, key => key == keyData))

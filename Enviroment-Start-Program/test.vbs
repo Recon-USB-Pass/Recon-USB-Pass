@@ -1,0 +1,1 @@
+MsgBox "Hola desde test.vbs", vbInformation, "Mesaje"
