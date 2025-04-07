@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Bloqueo-C")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a3f310522fc756bf8e221ad08337899888f28b81")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4105681207c4792b5a681c186c24e30e735d927d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Bloqueo-C")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Bloqueo-C")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
