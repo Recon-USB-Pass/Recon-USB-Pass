@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RUSBP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+969b517c79bbb9db7d87f826b62a5013de4de4bc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+03ccf0004a3876790c96b80bbd066125b11db3de")]
 [assembly: System.Reflection.AssemblyProductAttribute("RUSBP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RUSBP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

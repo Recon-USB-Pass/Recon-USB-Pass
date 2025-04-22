@@ -1,255 +1,338 @@
-using System.Runtime.InteropServices;
+/*---------------------------------------------------------------
+ Form1.cs  –  Bloqueo + llave USB (v7 con sólo validación de key.txt)
+----------------------------------------------------------------*/
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Management;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
-namespace BloqueoYUsbDetectionApp
+namespace Bloqueo_USB
 {
     public partial class Form1 : Form
     {
-        private const int MaxIntentos = 3;
-        private int intentosFallidos = 0;
-        private const string PinValido = "1234"; // PIN predefinido
-        private bool pinValidado = false; // Variable de estado para indicar si el PIN fue validado
+        /* ---------------- CONFIG ---------------- */
+        private static readonly bool DEBUG_MODE = true;      // ← false en producción
+        private const int    MAX_INTENTOS = 3;
+        private const string PIN_VALIDO   = "1234";
 
-        // Para la detección de USB
-        private const string LogDir = "logs";
-        private const string LogFile = "logs/usb_log.txt";
-        private ManagementEventWatcher insertWatcher = null!;
-        private ManagementEventWatcher removeWatcher = null!;
-        private Dictionary<string, Tuple<PictureBox, Label>> connectedUsbDevices = new();
+        /* ---------------- ESTADO ---------------- */
+        private int  _intentosFallidos  = 0;
+        private bool _pinValidado       = false;
+        private HashSet<string> _serialesPrevios = new();   // Para registrar conexiones y desconexiones
 
-        private readonly HttpClient _httpClient;
+        /* ---------------- UI -------------------- */
+        private PictureBox _picUsb   = null!;
+        private TextBox    _txtPin   = null!;
+        private Button     _btnLogin = null!;
 
+        /* ---------------- GANCHO TECLAS --------- */
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN     = 0x0100;
+        private static readonly LowLevelKeyboardProc _proc = HookCallback;
+        private static IntPtr _hookID = IntPtr.Zero;
+
+        /* ---------------- WMI WATCHERS ---------- */
+        private ManagementEventWatcher _insertWatcher = null!;
+        private ManagementEventWatcher _removeWatcher = null!;
+        private static readonly string LOG_DIR = "logs";
+
+        /* ========================================================== */
         public Form1()
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.WindowState = FormWindowState.Maximized;
-            this.TopMost = true;
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.Load += Form1_Load;
-            this.FormClosing += Form1_FormClosing;
 
-            // Configuración para el bloqueo de pantalla
-            _httpClient = new HttpClient();
+#if DEBUG
+            FormBorderStyle = FormBorderStyle.Sizable;
+            ControlBox = MaximizeBox = MinimizeBox = true;
+#else
+            FormBorderStyle = FormBorderStyle.None;
+            ControlBox = MaximizeBox = MinimizeBox = false;
+#endif
+            WindowState   = FormWindowState.Maximized;
+            StartPosition = FormStartPosition.CenterScreen;
+            TopMost       = true;
 
-            // Iniciar detección de USB
-            InitializeUsbDetection();
+            Load        += OnLoad;
+            FormClosing += OnFormClosing;
+            _hookID      = SetHook(_proc);          // bloquea Win Keys
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        /* ---------------- LOAD ------------------ */
+        private void OnLoad(object? sender, EventArgs e)
         {
-            // Inicializar controles de PIN
-            TextBox txtPin = new TextBox
+            _picUsb = new PictureBox
             {
-                Name = "txtPin",
-                PasswordChar = '*',
-                Location = new Point(this.Width / 2 - 100, this.Height / 2 - 20),
-                Width = 200,
-                MaxLength = 4,
-                TextAlign = HorizontalAlignment.Center
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                Size     = new Size(120, 120),
+                Image    = Image.FromFile(@"images\usb_icon_off.png"),
+                Location = new Point(Width / 2 - 60, Height / 2 - 260)
             };
 
-            txtPin.KeyPress += (s, ev) =>
+            _txtPin = new TextBox
+            {
+                PasswordChar = '*',
+                MaxLength    = 4,
+                Width        = 200,
+                Enabled      = false,
+                TextAlign    = HorizontalAlignment.Center,
+                Location     = new Point(Width / 2 - 100, Height / 2 - 50)
+            };
+            _txtPin.KeyPress += (_, ev) =>
             {
                 if (!char.IsDigit(ev.KeyChar) && ev.KeyChar != (char)Keys.Back)
-                {
-                    ev.Handled = true; // Bloquea la entrada si no es un número
-                }
+                    ev.Handled = true;
             };
 
-            Button btnValidar = new Button
+            _btnLogin = new Button
             {
-                Name = "btnValidar",
-                Text = "Validar",
-                Location = new Point(this.Width / 2 - 100, this.Height / 2 + 20),
-                Width = 200
+                Text     = "Entrar",
+                Width    = 200,
+                Enabled  = false,
+                Location = new Point(Width / 2 - 100, Height / 2)
             };
-            btnValidar.Click += BtnValidar_Click;
+            _btnLogin.Click += OnValidarPin;
 
-            this.Controls.Add(txtPin);
-            this.Controls.Add(btnValidar);
+            Controls.AddRange(new Control[] { _picUsb, _txtPin, _btnLogin });
+
+#if !DEBUG
             RestrictCursor();
+#endif
+            InicializarDeteccionUsb();
         }
 
-        private void BtnValidar_Click(object sender, EventArgs e)
+        /* ---------------- PIN ------------------- */
+        private void OnValidarPin(object? s, EventArgs e)
         {
-            TextBox txtPin = this.Controls["txtPin"] as TextBox;
-            if (txtPin != null)
+            if (_txtPin.Text == PIN_VALIDO)
             {
-                string pinIngresado = txtPin.Text;
-                if (pinIngresado == PinValido)
+                _pinValidado = true;
+                Application.Exit();
+            }
+            else
+            {
+                _intentosFallidos++;
+                MessageBox.Show($"PIN incorrecto. Intentos restantes: {MAX_INTENTOS - _intentosFallidos}");
+                if (_intentosFallidos >= MAX_INTENTOS)
                 {
-                    MessageBox.Show("Acceso concedido.");
-                    pinValidado = true; // Marcar como validado
-                    Application.Exit(); // Cierra la aplicación después de la validación del PIN
+                    MessageBox.Show("Máximo de intentos alcanzado. Apagando.");
+                    System.Diagnostics.Process.Start("shutdown", "/s /f /t 0");
                 }
-                else
+            }
+        }
+
+        /* ------------- DETECCIÓN USB ------------ */
+        private void InicializarDeteccionUsb()
+        {
+            _insertWatcher = new ManagementEventWatcher(
+                new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2"));
+            _removeWatcher = new ManagementEventWatcher(
+                new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 3"));
+
+            EventArrivedEventHandler h = async (_, __) => await VerificarUsbAsync();
+
+            _insertWatcher.EventArrived += h;
+            _removeWatcher.EventArrived += h;
+
+            _insertWatcher.Start();
+            _removeWatcher.Start();
+
+            _ = VerificarUsbAsync();      // primer chequeo
+        }
+
+        /* ------ núcleo de verificación ------ */
+        private async Task VerificarUsbAsync()
+        {
+            await Task.Delay(500);   // esperar montaje de letra
+
+            var infos = EnumerarUsbInfos();
+            var actuales = infos.Select(i => i.Serial).ToHashSet();
+
+            /* -- Logs de Conexión -- */
+            foreach (var nuevo in actuales.Except(_serialesPrevios))
+                LogEvento(nuevo, "Conectado");
+
+            /* -- Logs de Desconexión -- */
+            foreach (var gone in _serialesPrevios.Except(actuales))
+                LogEvento(gone, "Desconectado");
+
+            _serialesPrevios = actuales;
+
+            bool llaveOk = await Task.Run(async () =>
+            {
+                foreach (var info in infos)
                 {
-                    intentosFallidos++;
-                    MessageBox.Show($"PIN incorrecto. Intentos restantes: {MaxIntentos - intentosFallidos}");
-                    if (intentosFallidos >= MaxIntentos)
+                    if (ExisteKeyTxt(info.Letras))
                     {
-                        MessageBox.Show("Número máximo de intentos alcanzado. Apagando el sistema.");
-                        ApagarSistema();
+                        LogDebug($"Archivo key.txt encontrado en {string.Join(", ", info.Letras)}");
+                        return true;
                     }
                 }
+                return false;
+            });
+
+            Invoke(new Action(() => ActualizarUiUsb(llaveOk)));
+        }
+
+        private void ActualizarUiUsb(bool ok)
+        {
+            _picUsb.Image = Image.FromFile(ok
+                ? @"images\usb_icon_on.png"
+                : @"images\usb_icon_off.png");
+
+            _txtPin.Enabled  = ok;
+            _btnLogin.Enabled = ok;
+        }
+
+        /* ---------  Helpers USB --------- */
+        private record UsbInfo(string Serial, List<string> Letras);
+
+        private static string SerialFromPnp(string pnp) =>
+            pnp.Split('\\').LastOrDefault()?.Split('&').FirstOrDefault() ?? "";
+
+        private List<UsbInfo> EnumerarUsbInfos()
+        {
+            var list = new List<UsbInfo>();
+
+            var ddr = new ManagementObjectSearcher(
+                "SELECT DeviceID, PNPDeviceID FROM Win32_DiskDrive WHERE InterfaceType='USB'");
+
+            foreach (ManagementObject d in ddr.Get())
+            {
+                string serial = SerialFromPnp(d["PNPDeviceID"]?.ToString() ?? "");
+                if (serial == "") continue;
+
+                var letras = new List<string>();
+                foreach (ManagementObject part in d.GetRelated("Win32_DiskPartition"))
+                foreach (ManagementObject log  in part.GetRelated("Win32_LogicalDisk"))
+                    letras.Add(log["DeviceID"].ToString() + @"\");
+
+                list.Add(new UsbInfo(serial, letras));
             }
+            return list;
         }
 
-        private void ApagarSistema()
+        private bool ExisteKeyTxt(IEnumerable<string> letras)
         {
-            // Ejecuta el comando para apagar el sistema
-            System.Diagnostics.Process.Start("shutdown", "/s /f /t 0");
-        }
-
-        private void RestrictCursor()
-        {
-            Rectangle areaPermitida = new Rectangle(100, 100, 800, 600); 
-            RECT clipRect = new RECT
+            foreach (var letra in letras)
             {
-                Left = areaPermitida.Left,
-                Top = areaPermitida.Top,
-                Right = areaPermitida.Right,
-                Bottom = areaPermitida.Bottom
-            };
-            ClipCursor(ref clipRect);
-        }
-
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (!pinValidado)
-            {
-                e.Cancel = true;
-                MessageBox.Show("Esta ventana no puede cerrarse hasta que se complete la validación.");
-            }
-        }
-
-        // Para detectar la inserción y extracción de dispositivos USB
-        private void InitializeUsbDetection()
-        {
-            if (!Directory.Exists(LogDir)) Directory.CreateDirectory(LogDir);
-
-            // Watcher para conexión (EventType=2)
-            insertWatcher = new ManagementEventWatcher(
-                new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 2")
-            );
-            insertWatcher.EventArrived += (s, e) => Invoke(new Action(RefreshUsbDevices));
-            insertWatcher.Start();
-
-            // Watcher para desconexión (EventType=3)
-            removeWatcher = new ManagementEventWatcher(
-                new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 3")
-            );
-            removeWatcher.EventArrived += (s, e) => Invoke(new Action(RefreshUsbDevices));
-            removeWatcher.Start();
-
-            RefreshUsbDevices();
-        }
-
-        private void RefreshUsbDevices()
-        {
-            Dictionary<string, string> currentUsb = GetConnectedUsbDevices();
-
-            foreach (var device in currentUsb)
-            {
-                if (!connectedUsbDevices.ContainsKey(device.Key))
+                try
                 {
-                    LogEvent($"USB conectado: {device.Key}");
-                    AddUsbDevice(device.Key, device.Value);
+                    // Verificar si tenemos permisos para acceder a la unidad
+                    if (Directory.Exists(letra))
+                    {
+                        string keyFile = Path.Combine(letra, "key.txt");
+                        if (File.Exists(keyFile))
+                        {
+                            LogDebug($"Archivo key.txt encontrado en {letra}");
+                            return true;
+                        }
+                        else
+                        {
+                            LogDebug($"Archivo key.txt no encontrado en {letra}");
+                        }
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    LogDebug($"Acceso denegado a {letra}");
                 }
             }
-
-            List<string> toRemove = new();
-            foreach (var existing in connectedUsbDevices.Keys)
-                if (!currentUsb.ContainsKey(existing))
-                    toRemove.Add(existing);
-
-            foreach (var devId in toRemove)
-            {
-                LogEvent($"USB desconectado: {devId}");
-                RemoveUsbDevice(devId);
-            }
+            return false;
         }
 
-        private Dictionary<string, string> GetConnectedUsbDevices()
+        /* ------------- LOG ------------- */
+        private static void LogEvento(string serial, string evento)
         {
-            var results = new Dictionary<string, string>();
-            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_DiskDrive WHERE InterfaceType='USB'");
-            foreach (ManagementObject disk in searcher.Get())
-            {
-                string pnpId = disk["PNPDeviceID"]?.ToString() ?? "";
-                string model = disk["Model"]?.ToString() ?? "USB";
-                if (!string.IsNullOrEmpty(pnpId)) results[pnpId] = model;
-            }
-            return results;
+            if (serial == "") return;
+            if (!Directory.Exists(LOG_DIR)) Directory.CreateDirectory(LOG_DIR);
+
+            string shortId = serial.Length > 8 ? serial[^8..] : serial;
+            string path    = Path.Combine(LOG_DIR, $"usb_{shortId}.txt");
+            string ts      = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            File.AppendAllText(path, $"{ts} - {evento}{Environment.NewLine}");
         }
 
-        private void AddUsbDevice(string deviceId, string deviceName)
+        /* ------------- LOG DEBUG ------------- */
+        private static void LogDebug(string message)
         {
-            var pic = new PictureBox
-            {
-                Size = new Size(50, 50),
-                Image = Image.FromFile("images\\usb_icon.png"),
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                BackColor = Color.Transparent
-            };
-            var lbl = new Label
-            {
-                AutoSize = true,
-                Text = $"Dispositivo: {deviceName}",
-                ForeColor = Color.Black
-            };
-            Controls.Add(pic);
-            Controls.Add(lbl);
-
-            connectedUsbDevices[deviceId] = Tuple.Create(pic, lbl);
-            RepositionUsbDevices();
-        }
-
-        private void RemoveUsbDevice(string deviceId)
-        {
-            if (connectedUsbDevices.ContainsKey(deviceId))
-            {
-                var (pic, lbl) = connectedUsbDevices[deviceId];
-                Controls.Remove(pic);
-                Controls.Remove(lbl);
-                connectedUsbDevices.Remove(deviceId);
-                RepositionUsbDevices();
-            }
-        }
-
-        private void RepositionUsbDevices()
-        {
-            int i = 0;
-            foreach (var kvp in connectedUsbDevices)
-            {
-                var pic = kvp.Value.Item1;
-                var lbl = kvp.Value.Item2;
-                pic.Location = new Point(10, i * 60 + 10);
-                lbl.Location = new Point(70, i * 60 + 25);
-                i++;
-            }
-        }
-
-        private void LogEvent(string text)
-        {
+            string logPath = Path.Combine(LOG_DIR, "log.txt");
             string ts = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            using var writer = new StreamWriter(LogFile, true);
-            writer.WriteLine($"{ts} - {text}");
+            File.AppendAllText(logPath, $"{ts} - {message}{Environment.NewLine}");
         }
 
-        // Declaración de la estructura RECT para interop con la API de Windows
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
+        /* ---------- CURSOR y TECLAS ---------- */
+        private static void RestrictCursor()
         {
-            public int Left;
-            public int Top;
-            public int Right;
-            public int Bottom;
+            Rectangle a = new(100, 100, 800, 600);
+            RECT r = new() { Left = a.Left, Top = a.Top, Right = a.Right, Bottom = a.Bottom };
+            ClipCursor(ref r);
         }
 
-        // Importación de la función ClipCursor desde user32.dll para controlar el cursor
-        [DllImport("user32.dll")]
-        public static extern bool ClipCursor(ref RECT lpRect);
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+#if DEBUG
+            return base.ProcessCmdKey(ref msg, keyData);
+#else
+            Keys[] block = { Keys.Alt | Keys.F4, Keys.Alt, Keys.Tab, Keys.LWin, Keys.RWin };
+            if (block.Any(k => k == keyData)) return true;
+            return base.ProcessCmdKey(ref msg, keyData);
+#endif
+        }
+
+        private void OnFormClosing(object? s, FormClosingEventArgs e)
+        {
+#if !DEBUG
+            if (!_pinValidado)
+            {
+                e.Cancel = true;
+                MessageBox.Show("No puedes cerrar hasta autenticar.");
+            }
+#endif
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+#if !DEBUG
+            ClipCursor(ref new RECT());
+#endif
+            UnhookWindowsHookEx(_hookID);
+            _insertWatcher.Stop();
+            _removeWatcher.Stop();
+        }
+
+        /* ---------- GANCHO & P/Invoke ---------- */
+        private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        private static IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            using var p = System.Diagnostics.Process.GetCurrentProcess();
+            using var m = p.MainModule!;
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(m.ModuleName), 0);
+        }
+
+        private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+                int vk = Marshal.ReadInt32(lParam);
+                if (vk == (int)Keys.LWin || vk == (int)Keys.RWin) return (IntPtr)1;
+            }
+            return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT { public int Left, Top, Right, Bottom; }
+
+        [DllImport("user32.dll")]                       private static extern bool   ClipCursor(ref RECT r);
+        [DllImport("user32.dll", SetLastError = true)]  private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+        [DllImport("user32.dll", SetLastError = true)]  private static extern bool   UnhookWindowsHookEx(IntPtr hhk);
+        [DllImport("user32.dll", SetLastError = true)]  private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)] private static extern IntPtr GetModuleHandle(string name);
     }
 }
