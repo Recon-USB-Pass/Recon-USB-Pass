@@ -1,0 +1,21 @@
+2025-04-22 19:57:07 - Intento de desbloqueo BitLocker en G:\ (exit=-2147024809)
+2025-04-22 19:57:07 - Intento de desbloqueo BitLocker en F:\ (exit=-2147024809)
+2025-04-22 19:57:07 - key.txt encontrado en F:\
+2025-04-22 19:57:07 - USB válido detectado: 040174132B54FB6E1E0EB98B5C5C811F22D8F9FF7CDA15E1247EB6757141521
+2025-04-22 19:57:12 - Intento de desbloqueo BitLocker en G:\ (exit=-2147024809)
+2025-04-22 19:57:17 - Intento de desbloqueo BitLocker en G:\ (exit=-2147024809)
+2025-04-22 19:57:18 - Intento de desbloqueo BitLocker en F:\ (exit=-2147024809)
+2025-04-22 19:57:18 - key.txt encontrado en F:\
+2025-04-22 19:57:18 - USB válido detectado: 040174132B54FB6E1E0EB98B5C5C811F22D8F9FF7CDA15E1247EB6757141521
+2025-04-28 11:51:14 - Intento de desbloqueo BitLocker en F:\ (exit=-2147024809)
+2025-04-28 11:51:14 - key.txt encontrado en F:\
+2025-04-28 11:51:14 - USB válido detectado: 040174132B54FB6E1E0EB98B5C5C811F22D8F9FF7CDA15E1247EB6757141521
+2025-04-30 12:37:40 - Intento de desbloqueo BitLocker en F:\ (exit=-2147024809)
+2025-04-30 12:37:40 - key.txt encontrado en F:\
+2025-04-30 12:37:40 - USB válido detectado: 040174132B54FB6E1E0EB98B5C5C811F22D8F9FF7CDA15E1247EB6757141521
+2025-05-07 11:05:04 - Intento de desbloqueo BitLocker en F:\ (exit=-2147024809)
+2025-05-07 11:05:04 - key.txt encontrado en F:\
+2025-05-07 11:05:04 - USB válido detectado: 040174132B54FB6E1E0EB98B5C5C811F22D8F9FF7CDA15E1247EB6757141521
+2025-05-08 11:06:49 - Intento de desbloqueo BitLocker en F:\ (exit=-2147024809)
+2025-05-08 11:06:49 - key.txt encontrado en F:\
+2025-05-08 11:06:49 - USB válido detectado: 040174132B54FB6E1E0EB98B5C5C811F22D8F9FF7CDA15E1247EB6757141521

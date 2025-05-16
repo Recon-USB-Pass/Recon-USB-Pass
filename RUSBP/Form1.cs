@@ -1,51 +1,45 @@
 /*---------------------------------------------------------------
- Form1.cs  –  Bloqueo + llave USB (v7 con sólo validación de key.txt)
+ Form1.cs  –  Bloqueo + llave USB (v8: detección + BitLocker)
 ----------------------------------------------------------------*/
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
+using System.Diagnostics;
 using System.Management;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Bloqueo_USB
 {
     public partial class Form1 : Form
     {
         /* ---------------- CONFIG ---------------- */
-        private static readonly bool DEBUG_MODE = true;      // ← false en producción
-        private const int    MAX_INTENTOS = 3;
-        private const string PIN_VALIDO   = "1234";
+        private const bool   DEBUG_MODE        = true;  // ← false en producción
+        private const int    MAX_INTENTOS      = 3;
+        private const string PIN_VALIDO        = "1234";
+        private const string BITLOCKER_PASS    = "Zarate_123"; // <-- ¡Cámbiala / protégela!
 
         /* ---------------- ESTADO ---------------- */
         private int  _intentosFallidos  = 0;
         private bool _pinValidado       = false;
-        private HashSet<string> _serialesPrevios = new();   // Para registrar conexiones y desconexiones
+        private HashSet<string> _serialesPrevios = new();
 
         /* ---------------- UI -------------------- */
-        private PictureBox _picUsb   = null!;
-        private TextBox    _txtPin   = null!;
+        private PictureBox _picUsb = null!;
+        private TextBox    _txtPin = null!;
         private Button     _btnLogin = null!;
 
-        /* ---------------- GANCHO TECLAS --------- */
+        /* ---------------- TECLAS ---------------- */
         private const int WH_KEYBOARD_LL = 13;
         private const int WM_KEYDOWN     = 0x0100;
         private static readonly LowLevelKeyboardProc _proc = HookCallback;
         private static IntPtr _hookID = IntPtr.Zero;
 
-        /* ---------------- WMI WATCHERS ---------- */
+        /* ---------------- WMI ------------------- */
         private ManagementEventWatcher _insertWatcher = null!;
         private ManagementEventWatcher _removeWatcher = null!;
-        private static readonly string LOG_DIR = "logs";
+        private const string LOG_DIR = "logs";
 
         /* ========================================================== */
         public Form1()
         {
             InitializeComponent();
-
 #if DEBUG
             FormBorderStyle = FormBorderStyle.Sizable;
             ControlBox = MaximizeBox = MinimizeBox = true;
@@ -59,7 +53,7 @@ namespace Bloqueo_USB
 
             Load        += OnLoad;
             FormClosing += OnFormClosing;
-            _hookID      = SetHook(_proc);          // bloquea Win Keys
+            _hookID      = SetHook(_proc);          // bloquea Win Keys
         }
 
         /* ---------------- LOAD ------------------ */
@@ -120,7 +114,7 @@ namespace Bloqueo_USB
                 if (_intentosFallidos >= MAX_INTENTOS)
                 {
                     MessageBox.Show("Máximo de intentos alcanzado. Apagando.");
-                    System.Diagnostics.Process.Start("shutdown", "/s /f /t 0");
+                    Process.Start("shutdown", "/s /f /t 0");
                 }
             }
         }
@@ -133,15 +127,14 @@ namespace Bloqueo_USB
             _removeWatcher = new ManagementEventWatcher(
                 new WqlEventQuery("SELECT * FROM Win32_VolumeChangeEvent WHERE EventType = 3"));
 
-            EventArrivedEventHandler h = async (_, __) => await VerificarUsbAsync();
-
+            EventArrivedEventHandler h = (_, __) => VerificarUsbAsync();
             _insertWatcher.EventArrived += h;
             _removeWatcher.EventArrived += h;
 
             _insertWatcher.Start();
             _removeWatcher.Start();
 
-            _ = VerificarUsbAsync();      // primer chequeo
+            _ = VerificarUsbAsync(); // chequeo inicial
         }
 
         /* ------ núcleo de verificación ------ */
@@ -149,31 +142,30 @@ namespace Bloqueo_USB
         {
             await Task.Delay(500);   // esperar montaje de letra
 
-            var infos = EnumerarUsbInfos();
-            var actuales = infos.Select(i => i.Serial).ToHashSet();
+            var infos     = EnumerarUsbInfos();
+            var actuales  = infos.Select(i => i.Serial).ToHashSet();
 
-            /* -- Logs de Conexión -- */
             foreach (var nuevo in actuales.Except(_serialesPrevios))
                 LogEvento(nuevo, "Conectado");
-
-            /* -- Logs de Desconexión -- */
             foreach (var gone in _serialesPrevios.Except(actuales))
                 LogEvento(gone, "Desconectado");
 
             _serialesPrevios = actuales;
 
-            bool llaveOk = await Task.Run(async () =>
+            bool llaveOk = false;
+
+            foreach (var info in infos)
             {
-                foreach (var info in infos)
+                // Intentamos desbloquear TODAS sus letras (por si están cifradas)
+                foreach (var letra in info.Letras) TryUnlockBitLocker(letra);
+
+                if (ExisteKeyTxt(info.Letras))
                 {
-                    if (ExisteKeyTxt(info.Letras))
-                    {
-                        LogDebug($"Archivo key.txt encontrado en {string.Join(", ", info.Letras)}");
-                        return true;
-                    }
+                    LogDebug($"USB válido detectado: {info.Serial}");
+                    llaveOk = true;
+                    break;
                 }
-                return false;
-            });
+            }
 
             Invoke(new Action(() => ActualizarUiUsb(llaveOk)));
         }
@@ -184,7 +176,7 @@ namespace Bloqueo_USB
                 ? @"images\usb_icon_on.png"
                 : @"images\usb_icon_off.png");
 
-            _txtPin.Enabled  = ok;
+            _txtPin.Enabled   = ok;
             _btnLogin.Enabled = ok;
         }
 
@@ -216,40 +208,60 @@ namespace Bloqueo_USB
             return list;
         }
 
+        /* --- BitLocker + archivo key.txt -------- */
+        private void TryUnlockBitLocker(string letra)
+        {
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName        = "cmd.exe",
+                    Arguments       = $"/c manage-bde -unlock {letra.TrimEnd('\\')} -password {BITLOCKER_PASS} >nul 2>&1",
+                    CreateNoWindow  = true,
+                    UseShellExecute = false
+                };
+                using var p = Process.Start(psi);
+                p?.WaitForExit(8000);
+                LogDebug($"Intento de desbloqueo BitLocker en {letra} (exit={p?.ExitCode})");
+            }
+            catch (Exception ex)
+            {
+                LogDebug($"Error unlock {letra}: {ex.Message}");
+            }
+        }
+
         private bool ExisteKeyTxt(IEnumerable<string> letras)
         {
             foreach (var letra in letras)
             {
+                string root = letra.EndsWith(@"\") ? letra : letra + @"\";
                 try
                 {
-                    // Verificar si tenemos permisos para acceder a la unidad
-                    if (Directory.Exists(letra))
+                    if (Directory.Exists(root))
                     {
-                        string keyFile = Path.Combine(letra, "key.txt");
+                        string keyFile = Path.Combine(root, "key.txt");
                         if (File.Exists(keyFile))
                         {
-                            LogDebug($"Archivo key.txt encontrado en {letra}");
+                            LogDebug($"key.txt encontrado en {root}");
                             return true;
                         }
                         else
-                        {
-                            LogDebug($"Archivo key.txt no encontrado en {letra}");
-                        }
+                            LogDebug($"Sin key.txt en {root}");
                     }
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    LogDebug($"Acceso denegado a {letra}");
+                    LogDebug($"Acceso denegado a {root}");
                 }
             }
             return false;
         }
 
-        /* ------------- LOG ------------- */
+        /* ---------------- LOG ------------------- */
         private static void LogEvento(string serial, string evento)
         {
             if (serial == "") return;
-            if (!Directory.Exists(LOG_DIR)) Directory.CreateDirectory(LOG_DIR);
+            Directory.CreateDirectory(LOG_DIR);
 
             string shortId = serial.Length > 8 ? serial[^8..] : serial;
             string path    = Path.Combine(LOG_DIR, $"usb_{shortId}.txt");
@@ -257,12 +269,11 @@ namespace Bloqueo_USB
             File.AppendAllText(path, $"{ts} - {evento}{Environment.NewLine}");
         }
 
-        /* ------------- LOG DEBUG ------------- */
-        private static void LogDebug(string message)
+        private static void LogDebug(string msg)
         {
-            string logPath = Path.Combine(LOG_DIR, "log.txt");
+            Directory.CreateDirectory(LOG_DIR);
             string ts = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            File.AppendAllText(logPath, $"{ts} - {message}{Environment.NewLine}");
+            File.AppendAllText(Path.Combine(LOG_DIR, "debug.txt"), $"{ts} - {msg}{Environment.NewLine}");
         }
 
         /* ---------- CURSOR y TECLAS ---------- */
@@ -311,7 +322,7 @@ namespace Bloqueo_USB
 
         private static IntPtr SetHook(LowLevelKeyboardProc proc)
         {
-            using var p = System.Diagnostics.Process.GetCurrentProcess();
+            using var p = Process.GetCurrentProcess();
             using var m = p.MainModule!;
             return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(m.ModuleName), 0);
         }

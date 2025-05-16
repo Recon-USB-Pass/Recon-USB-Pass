@@ -32,18 +32,49 @@ namespace Bloqueo_USB         // ← ajusta si tu namespace es distinto
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            pictureBox1 = new PictureBox();
+            pictureBox2 = new PictureBox();
+            ((ISupportInitialize)pictureBox1).BeginInit();
+            ((ISupportInitialize)pictureBox2).BeginInit();
+            SuspendLayout();
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Image = RUSBP.Properties.Resources.usb_off;
+            pictureBox1.Location = new Point(221, 117);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(100, 50);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            // 
+            // pictureBox2
+            // 
+            pictureBox2.Image = RUSBP.Properties.Resources.usb_on;
+            pictureBox2.Location = new Point(393, 109);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new Size(100, 50);
+            pictureBox2.TabIndex = 1;
+            pictureBox2.TabStop = false;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);   // ← VS ajusta según DPI
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "Form1";
-            this.Text = "Form1";
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackgroundImage = RUSBP.Properties.Resources.Block_Screen_WALLPAPER;
+            ClientSize = new Size(700, 338);
+            Controls.Add(pictureBox2);
+            Controls.Add(pictureBox1);
+            Margin = new Padding(3, 2, 3, 2);
+            Name = "Form1";
+            Text = "Form1";
+            ((ISupportInitialize)pictureBox1).EndInit();
+            ((ISupportInitialize)pictureBox2).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
+
+        private PictureBox pictureBox1;
+        private PictureBox pictureBox2;
     }
 }

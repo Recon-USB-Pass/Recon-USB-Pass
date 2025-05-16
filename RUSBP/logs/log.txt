@@ -8,3 +8,36 @@
 2025-04-22 17:40:56 - Archivo key.txt encontrado en F:\
 2025-04-22 17:44:24 - Archivo key.txt encontrado en G:\
 2025-04-22 17:44:24 - Archivo key.txt encontrado en G:\
+2025-04-22 19:08:37 - Archivo key.txt encontrado en G:\
+2025-04-22 19:08:37 - Archivo key.txt encontrado en G:\
+2025-04-22 19:08:37 - Error al desbloquear la unidad G:\.
+2025-04-22 19:08:37 - Archivo key.txt encontrado en F:\
+2025-04-22 19:08:37 - Archivo key.txt encontrado en F:\
+2025-04-22 19:08:37 - Error al desbloquear la unidad F:\.
+2025-04-22 19:08:42 - Archivo key.txt encontrado en F:\
+2025-04-22 19:08:42 - Archivo key.txt encontrado en F:\
+2025-04-22 19:08:42 - Error al desbloquear la unidad F:\.
+2025-04-22 19:09:06 - Archivo key.txt encontrado en F:\
+2025-04-22 19:09:06 - Archivo key.txt encontrado en F:\
+2025-04-22 19:09:06 - Error al desbloquear la unidad F:\.
+2025-04-22 19:41:03 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:03 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:03 - Error al intentar desbloquear la unidad F:\ con BitLocker.
+2025-04-22 19:41:09 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:09 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:11 - Error al intentar desbloquear la unidad F:\ con BitLocker.
+2025-04-22 19:41:17 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:17 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:17 - Error al intentar desbloquear la unidad F:\ con BitLocker.
+2025-04-22 19:41:21 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:21 - Archivo key.txt encontrado en F:\
+2025-04-22 19:41:22 - Error al intentar desbloquear la unidad F:\ con BitLocker.
+2025-04-22 19:44:54 - Archivo key.txt encontrado en F:\
+2025-04-22 19:44:54 - Archivo key.txt encontrado en F:\
+2025-04-22 19:44:55 - Error al intentar desbloquear la unidad F:\ con BitLocker.
+2025-04-22 19:45:00 - Archivo key.txt encontrado en F:\
+2025-04-22 19:45:00 - Archivo key.txt encontrado en F:\
+2025-04-22 19:45:01 - Error al intentar desbloquear la unidad F:\ con BitLocker.
+2025-04-22 19:45:29 - Archivo key.txt encontrado en F:\
+2025-04-22 19:45:29 - Archivo key.txt encontrado en F:\
+2025-04-22 19:45:31 - Error al intentar desbloquear la unidad F:\ con BitLocker.

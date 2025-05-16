@@ -1,0 +1,85 @@
+2025-05-13 12:37:42 - Inspeccionando: F:\
+2025-05-13 12:37:42 -  → Certificado encontrado
+2025-05-13 12:37:42 -  → Clave privada encontrada
+2025-05-13 12:37:42 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:37:42 - Inspeccionando: F:\
+2025-05-13 12:37:42 -  → Certificado encontrado
+2025-05-13 12:37:42 -  → Clave privada encontrada
+2025-05-13 12:37:42 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:43:14 - No se detectaron USB conectados
+2025-05-13 12:43:45 - Inspeccionando: F:\
+2025-05-13 12:43:45 -  → Certificado encontrado
+2025-05-13 12:43:45 -  → Clave privada encontrada
+2025-05-13 12:43:45 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:43:46 - Inspeccionando: F:\
+2025-05-13 12:43:46 -  → Certificado encontrado
+2025-05-13 12:43:46 -  → Clave privada encontrada
+2025-05-13 12:43:46 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:43:46 - [VerifyUsb] ERROR SSL: The SSL connection could not be established, see inner exception.
+2025-05-13 12:44:27 - No se detectaron USB conectados
+2025-05-13 12:48:14 - No se detectaron USB conectados
+2025-05-13 12:48:22 - Inspeccionando: F:\
+2025-05-13 12:48:22 -  → Certificado encontrado
+2025-05-13 12:48:22 -  → Clave privada encontrada
+2025-05-13 12:48:22 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:48:22 - Inspeccionando: F:\
+2025-05-13 12:48:22 -  → Certificado encontrado
+2025-05-13 12:48:22 -  → Clave privada encontrada
+2025-05-13 12:48:22 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:48:22 - [VerifyUsb] ERROR SSL: The SSL connection could not be established, see inner exception.
+2025-05-13 12:50:19 - Inspeccionando: F:\
+2025-05-13 12:50:19 -  → Certificado encontrado
+2025-05-13 12:50:19 -  → Clave privada encontrada
+2025-05-13 12:50:19 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:50:20 - Inspeccionando: F:\
+2025-05-13 12:50:20 -  → Certificado encontrado
+2025-05-13 12:50:20 -  → Clave privada encontrada
+2025-05-13 12:50:20 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:50:20 - [VerifyUsb] Respuesta inválida: 401
+2025-05-13 12:50:41 - No se detectaron USB conectados
+2025-05-13 12:50:48 - Inspeccionando: F:\
+2025-05-13 12:50:48 -  → Certificado encontrado
+2025-05-13 12:50:48 -  → Clave privada encontrada
+2025-05-13 12:50:48 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:50:48 - Inspeccionando: F:\
+2025-05-13 12:50:48 -  → Certificado encontrado
+2025-05-13 12:50:48 -  → Clave privada encontrada
+2025-05-13 12:50:48 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:50:48 - [VerifyUsb] Respuesta inválida: 401
+2025-05-13 12:51:56 - Inspeccionando: F:\
+2025-05-13 12:51:56 -  → Certificado encontrado
+2025-05-13 12:51:56 -  → Clave privada encontrada
+2025-05-13 12:51:56 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:51:56 - Inspeccionando: F:\
+2025-05-13 12:51:56 -  → Certificado encontrado
+2025-05-13 12:51:56 -  → Clave privada encontrada
+2025-05-13 12:51:56 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:51:56 - [VerifyUsb] Respuesta inválida: 401
+2025-05-13 12:53:22 - Inspeccionando: F:\
+2025-05-13 12:53:22 -  → Certificado encontrado
+2025-05-13 12:53:22 -  → Clave privada encontrada
+2025-05-13 12:53:22 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:53:23 - Inspeccionando: F:\
+2025-05-13 12:53:23 -  → Certificado encontrado
+2025-05-13 12:53:23 -  → Clave privada encontrada
+2025-05-13 12:53:23 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:53:24 - [VerifyUsb] Respuesta inválida: 401
+2025-05-13 12:53:36 - No se detectaron USB conectados
+2025-05-13 12:53:44 - Inspeccionando: F:\
+2025-05-13 12:53:44 -  → Certificado encontrado
+2025-05-13 12:53:44 -  → Clave privada encontrada
+2025-05-13 12:53:44 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:53:44 - Inspeccionando: F:\
+2025-05-13 12:53:44 -  → Certificado encontrado
+2025-05-13 12:53:44 -  → Clave privada encontrada
+2025-05-13 12:53:44 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 12:53:44 - [VerifyUsb] Respuesta inválida: 401
+2025-05-13 13:15:13 - Inspeccionando: F:\
+2025-05-13 13:15:13 -  → Certificado encontrado
+2025-05-13 13:15:13 -  → Clave privada encontrada
+2025-05-13 13:15:13 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 13:15:13 - Inspeccionando: F:\
+2025-05-13 13:15:13 -  → Certificado encontrado
+2025-05-13 13:15:13 -  → Clave privada encontrada
+2025-05-13 13:15:13 - USB válido detectado - Serial: 040174132b54fb6e1e0e, Root: F:\
+2025-05-13 13:15:14 - [VerifyUsb] Respuesta inválida: 401

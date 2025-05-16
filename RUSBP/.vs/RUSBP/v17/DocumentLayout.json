@@ -1,0 +1,172 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\core\\apiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:core\\apiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\core\\usbwatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:core\\usbwatcher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\helpers\\cryptohelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:helpers\\cryptohelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\helpers\\cursorguard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:helpers\\cursorguard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\helpers\\keyboardhook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:helpers\\keyboardhook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\core\\logmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:core\\logmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UsbWatcher.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Core\\UsbWatcher.cs",
+              "RelativeDocumentMoniker": "Core\\UsbWatcher.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Core\\UsbWatcher.cs",
+              "RelativeToolTip": "Core\\UsbWatcher.cs",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T19:52:34.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ApiClient.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Core\\ApiClient.cs",
+              "RelativeDocumentMoniker": "Core\\ApiClient.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Core\\ApiClient.cs",
+              "RelativeToolTip": "Core\\ApiClient.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAowD8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T19:22:35.712Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CryptoHelper.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Helpers\\CryptoHelper.cs",
+              "RelativeDocumentMoniker": "Helpers\\CryptoHelper.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Helpers\\CryptoHelper.cs",
+              "RelativeToolTip": "Helpers\\CryptoHelper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:06:40.999Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CursorGuard.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Helpers\\CursorGuard.cs",
+              "RelativeDocumentMoniker": "Helpers\\CursorGuard.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Helpers\\CursorGuard.cs",
+              "RelativeToolTip": "Helpers\\CursorGuard.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:06:36.553Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "KeyboardHook.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Helpers\\KeyboardHook.cs",
+              "RelativeDocumentMoniker": "Helpers\\KeyboardHook.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Helpers\\KeyboardHook.cs",
+              "RelativeToolTip": "Helpers\\KeyboardHook.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAApwDQAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:06:28.21Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:04:39.773Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "LoginForm.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Forms\\LoginForm.cs",
+              "RelativeDocumentMoniker": "Forms\\LoginForm.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Forms\\LoginForm.cs",
+              "RelativeToolTip": "Forms\\LoginForm.cs",
+              "ViewState": "AgIAALsAAAAAAAAAAAAwwMgAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:05:20.325Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "LoginForm.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Forms\\LoginForm.cs",
+              "RelativeDocumentMoniker": "Forms\\LoginForm.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Forms\\LoginForm.cs [Dise\u00F1o]",
+              "RelativeToolTip": "Forms\\LoginForm.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:05:14.112Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LogManager.cs",
+              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Core\\LogManager.cs",
+              "RelativeDocumentMoniker": "Core\\LogManager.cs",
+              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Core\\LogManager.cs",
+              "RelativeToolTip": "Core\\LogManager.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAiwDgAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-16T18:02:44.801Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
