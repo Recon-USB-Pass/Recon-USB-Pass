@@ -1,0 +1,81 @@
+25-05-2025 0:20:30 CMD: manage-bde.exe -unlock F: -Password "Zarate_123"
+OUTPUT:
+Cifrado de unidad BitLocker: versi¢n de la herramienta de configuraci¢n 10.0.26100
+Copyright (C) 2013 Microsoft Corporation. Todos los derechos reservados.
+
+ERROR: sintaxis no v lida.
+No se entendi¢ "Zarate_123".
+
+Escriba "manage-bde -?" para usarla.
+
+ERROR:
+
+
+25-05-2025 0:21:50 CMD: manage-bde.exe -unlock F: -Password "Zarate_123"
+OUTPUT:
+Cifrado de unidad BitLocker: versi¢n de la herramienta de configuraci¢n 10.0.26100
+Copyright (C) 2013 Microsoft Corporation. Todos los derechos reservados.
+
+ERROR: sintaxis no v lida.
+No se entendi¢ "Zarate_123".
+
+Escriba "manage-bde -?" para usarla.
+
+ERROR:
+
+
+25-05-2025 0:22:24 CMD: manage-bde.exe -unlock F: -Password "Zarate_123"
+OUTPUT:
+Cifrado de unidad BitLocker: versi¢n de la herramienta de configuraci¢n 10.0.26100
+Copyright (C) 2013 Microsoft Corporation. Todos los derechos reservados.
+
+ERROR: sintaxis no v lida.
+No se entendi¢ "Zarate_123".
+
+Escriba "manage-bde -?" para usarla.
+
+ERROR:
+
+
+25-05-2025 0:46:13: UnlockDrive(F:)
+Output:
+
+Error:
+Get-CimInstance : Se produjo una excepci¢n en el inicializador de tipo de 
+'Microsoft.Management.Infrastructure.Native.ApplicationMethods'.
+En C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\BitLocker\BitLocker.psm1: 144 Car cter: 13
++             Get-CimInstance `
++             ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Get-CimInstance], TypeInitializationException
+    + FullyQualifiedErrorId : System.TypeInitializationException,Microsoft.Management.Infrastructure.CimCmdlets.GetCim 
+   InstanceCommand
+ 
+Get-Win32EncryptableVolumeInternal : F: no tiene un volumen de BitLocker asociado.
+En C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\BitLocker\BitLocker.psm1: 344 Car cter: 35
++ ... bleVolume = Get-Win32EncryptableVolumeInternal -MountPoint $MountPoin ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], COMException
+    + FullyQualifiedErrorId : System.Runtime.InteropServices.COMException,Get-Win32EncryptableVolumeInternal
+
+
+25-05-2025 1:20:56: UnlockDrive(F:)
+Output:
+
+Error:
+Get-CimInstance : Se produjo una excepci¢n en el inicializador de tipo de 
+'Microsoft.Management.Infrastructure.Native.ApplicationMethods'.
+En C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\BitLocker\BitLocker.psm1: 144 Car cter: 13
++             Get-CimInstance `
++             ~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Get-CimInstance], TypeInitializationException
+    + FullyQualifiedErrorId : System.TypeInitializationException,Microsoft.Management.Infrastructure.CimCmdlets.GetCim 
+   InstanceCommand
+ 
+Get-Win32EncryptableVolumeInternal : F: no tiene un volumen de BitLocker asociado.
+En C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules\BitLocker\BitLocker.psm1: 344 Car cter: 35
++ ... bleVolume = Get-Win32EncryptableVolumeInternal -MountPoint $MountPoin ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], COMException
+    + FullyQualifiedErrorId : System.Runtime.InteropServices.COMException,Get-Win32EncryptableVolumeInternal
+
+

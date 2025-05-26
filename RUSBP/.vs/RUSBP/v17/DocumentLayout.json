@@ -1,12 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|c:\\users\\rusbp\\desktop\\recon-usb-pass\\recon-usb-pass\\rusbp\\forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{290608D1-8A04-ED2B-E9AE-2CE272635127}|RUSBP.csproj|solutionrelative:forms\\loginform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -14,24 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "LoginForm.cs",
-              "DocumentMoniker": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Forms\\LoginForm.cs",
-              "RelativeDocumentMoniker": "Forms\\LoginForm.cs",
-              "ToolTip": "C:\\Users\\RUSBP\\Desktop\\Recon-USB-Pass\\Recon-USB-Pass\\RUSBP\\Forms\\LoginForm.cs",
-              "RelativeToolTip": "Forms\\LoginForm.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-05-16T20:13:21.951Z",
-              "EditorCaption": ""
             }
           ]
         }

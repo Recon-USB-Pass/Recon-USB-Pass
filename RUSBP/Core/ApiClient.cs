@@ -6,7 +6,6 @@ using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Text.Json;
 
 namespace RUSBP.Core
 {
@@ -14,58 +13,44 @@ namespace RUSBP.Core
     {
         private readonly HttpClient _http;
 
-        public ApiClient(string baseUrl)
+        public ApiClient(string backendIp)
         {
             var handler = new HttpClientHandler
             {
-                // ⚠️ Aceptar certificados autofirmados solo para desarrollo
                 ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
             };
-
+            string url = backendIp.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                ? backendIp
+                : $"https://{backendIp}:8443/";
             _http = new HttpClient(handler)
             {
-                BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/"),
+                BaseAddress = new Uri(url),
                 Timeout = TimeSpan.FromSeconds(15)
             };
         }
-
-        /* ───────────── Auth ───────────── */
 
         public async Task<string?> VerifyUsbAsync(string serial, string certPem, CancellationToken ct = default)
         {
             try
             {
-                var res = await _http.PostAsJsonAsync("api/auth/verify-usb", new { Serial = serial, CertPem = certPem }, ct);
-
+                var res = await _http.PostAsJsonAsync("api/auth/verify-usb", new { serial, certPem }, ct);
                 if (!res.IsSuccessStatusCode)
                 {
                     LogDebug($"[VerifyUsb] Respuesta inválida: {(int)res.StatusCode}");
                     return null;
                 }
-
                 return await res.Content.ReadAsStringAsync(ct);
             }
             catch (Exception ex)
             {
-                // Identificar si es error de conexión o de SSL
-                if (ex is HttpRequestException || ex.Message.Contains("expresamente dicha conexión") || ex.Message.Contains("actively refused"))
-                {
-                    MessageBox.Show("No hay conexión con el servidor. Por favor revise su red o que el backend esté activo.",
-                        "Sin conexión", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    MessageBox.Show($"Error de conexión con el servidor:\n{ex.Message}",
-                        "Error SSL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show($"Error de conexión con el servidor:\n{ex.Message}",
+                    "Error SSL", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 LogDebug($"[VerifyUsb] ERROR CONEXION: {ex.Message}");
                 return null;
             }
         }
 
-
-        public async Task<(bool ok, string? msg)> LoginAsync(
-                string serial, string sig, string pin, string mac)
+        public async Task<(bool ok, string? msg)> LoginAsync(string serial, string sig, string pin, string mac)
         {
             var json = new
             {
@@ -74,8 +59,7 @@ namespace RUSBP.Core
                 pin,
                 macAddress = mac
             };
-            var resp = await _http.PostAsJsonAsync("api/auth/login", json);
-
+            var resp = await _http.PostAsJsonAsync("api/auth/recover", json);
             string body = await resp.Content.ReadAsStringAsync();
             if (resp.IsSuccessStatusCode)
                 return (true, null);
@@ -83,11 +67,35 @@ namespace RUSBP.Core
             return (false, body.Length > 200 ? resp.StatusCode.ToString() : body);
         }
 
-        /* ───────────── Logs ───────────── */
+        // ---- NUEVO ----
+        public class RecoverUsbResponse
+        {
+            public string Cipher { get; set; } = "";
+            public string Tag { get; set; } = "";
+            public int Rol { get; set; }
+        }
 
-        /// <summary>
-        /// Envía una lista de eventos de log (JSON batch) al backend.
-        /// </summary>
+        public async Task<RecoverUsbResponse?> RecoverUsbAsync(string serial, int agentType)
+        {
+            try
+            {
+                var res = await _http.PostAsJsonAsync("api/usb/recover", new { serial, agentType });
+                if (!res.IsSuccessStatusCode)
+                {
+                    LogDebug($"[RecoverUsb] Respuesta inválida: {(int)res.StatusCode}");
+                    return null;
+                }
+                var json = await res.Content.ReadFromJsonAsync<RecoverUsbResponse>();
+                return json;
+            }
+            catch (Exception ex)
+            {
+                LogDebug($"[RecoverUsb] ERROR CONEXION: {ex.Message}");
+                return null;
+            }
+        }
+
+        // --- LOGS Y OTROS MÉTODOS SE MANTIENEN IGUAL ---
         public async Task<bool> SendLogsAsync(List<LogEvent> events, CancellationToken ct = default)
         {
             try
@@ -106,37 +114,6 @@ namespace RUSBP.Core
                 return false;
             }
         }
-
-        /// <summary>
-        /// Envía el archivo de log cifrado (.enc) al backend.
-        /// Útil si decides enviar todo el archivo PKI para máxima seguridad.
-        /// </summary>
-        public async Task<bool> SendEncryptedLogAsync(string serial, string encFilePath, CancellationToken ct = default)
-        {
-            if (!File.Exists(encFilePath)) return false;
-            try
-            {
-                using var content = new MultipartFormDataContent();
-                var fileContent = new StreamContent(File.OpenRead(encFilePath));
-                content.Add(fileContent, "logfile", Path.GetFileName(encFilePath));
-                content.Add(new StringContent(serial), "serial");
-
-                var resp = await _http.PostAsync("api/logs/upload", content, ct);
-                if (!resp.IsSuccessStatusCode)
-                {
-                    LogDebug($"[SendEncryptedLogAsync] Falló envío: {resp.StatusCode}");
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                LogDebug($"[SendEncryptedLogAsync] ERROR: {ex.Message}");
-                return false;
-            }
-        }
-
-        /* ───────────── Log Local ───────────── */
 
         private static void LogDebug(string msg)
         {
