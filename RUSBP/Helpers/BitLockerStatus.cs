@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Management;
+using System.Text.RegularExpressions;
 
 namespace RUSBP.Helpers
 {
@@ -8,37 +10,37 @@ namespace RUSBP.Helpers
         /// <summary>
         /// Devuelve true si la unidad tiene BitLocker y está *bloqueada*.
         /// </summary>
+        /// <summary>Devuelve true si el volumen está bloqueado; false si está desbloqueado o no se pudo determinar.</summary>
         public static bool IsLocked(string driveLetter)
         {
             try
             {
-                if (driveLetter.EndsWith("\\")) driveLetter = driveLetter.Substring(0, driveLetter.Length - 1);
-                if (!driveLetter.EndsWith(":")) driveLetter += ":";
+                string dl = driveLetter.Trim().TrimEnd('\\').TrimEnd(':') + ":";
 
-                using var searcher = new ManagementObjectSearcher(
-                    @"root\CIMV2\Security\MicrosoftVolumeEncryption",
-                    "SELECT * FROM Win32_EncryptableVolume");
-
-                foreach (ManagementObject vol in searcher.Get())
+                var p = Process.Start(new ProcessStartInfo
                 {
-                    string? letter = vol["DriveLetter"]?.ToString();
-                    if (string.Equals(letter, driveLetter, StringComparison.OrdinalIgnoreCase))
-                    {
-                        var protectionStatus = Convert.ToUInt32(vol["ProtectionStatus"]);
-                        // LockStatus a veces puede venir vacío: revisa directorios después de desbloquear
-                        var lockStatusObj = vol["LockStatus"];
-                        int lockStatus = lockStatusObj != null && int.TryParse(lockStatusObj.ToString(), out var v) ? v : -1;
+                    FileName = "manage-bde.exe",
+                    Arguments = $"-status {dl}",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                })!;
 
-                        // BitLocker activo (protectionStatus == 2), y bloqueado si lockStatus == 1
-                        return (protectionStatus == 2) && (lockStatus == 1);
-                    }
-                }
+                string output = p.StandardOutput.ReadToEnd();
+                p.WaitForExit(3000);
+
+                // Ejemplo de línea relevante:
+                // "    Estado de bloqueo:      Bloqueado"
+                var match = Regex.Match(output, @"Estado de bloqueo:\s+(Bloqueado|Desbloqueado)", RegexOptions.IgnoreCase);
+                if (!match.Success) return false;                 // <-- no encontrado ⇒ asumimos desbloqueado
+
+                return match.Groups[1].Value.StartsWith("Bloqueado", StringComparison.OrdinalIgnoreCase);
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show($"Error BitLockerStatus (IsLocked): {ex.Message}", "BitLockerStatus", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                // Cualquier error ⇒ asumimos desbloqueado y NO lanzamos UI
+                return false;
             }
-            return false;
         }
     }
 }

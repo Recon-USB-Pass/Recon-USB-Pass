@@ -1,4 +1,5 @@
-﻿using System;
+﻿// RUSBP/Program.cs
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,124 +17,125 @@ namespace RUSBP
         [STAThread]
         static void Main()
         {
-            bool createdNew;
-            using (var mutex = new Mutex(true, "RUSBP_USB_LOCK_AGENT", out createdNew))
+            // ───────────────────── 0. Mutex ─────────────────────
+            using var _ = new Mutex(initiallyOwned: true, "RUSBP_USB_LOCK_AGENT", out bool created);
+            if (!created) return;     // ya hay otro agente
+
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+
+            try
             {
-                if (!createdNew)
-                    return;
+                string rpRoot, backendIp;
 
-                Application.SetHighDpiMode(HighDpiMode.SystemAware);
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-
-                try
+                /* ───────────── 1. Primera ejecución vs. posteriores ───────────── */
+                var settings = SettingsStore.Load();
+                if (settings is null)
                 {
-                    string rpRoot, backendIp;
-
-                    // === SETUP INICIAL SOLO UNA VEZ ===
-                    var settings = SettingsStore.Load();
-                    if (settings == null)
-                    {
-                        (rpRoot, backendIp) = SetupFirstRunWithUsbRoot();
-                        SettingsStore.Save(rpRoot, backendIp);
-                    }
-                    else
-                    {
-                        rpRoot = settings.Value.rpRoot;
-                        backendIp = settings.Value.backendIp;
-                    }
-
-                    // --- Dependency Injection ---
-                    var services = new ServiceCollection();
-                    services.AddSingleton(new ApiClient(backendIp));
-                    services.AddSingleton<UsbCryptoService>();
-                    services.AddSingleton<LogSyncService>();
-
-                    var sp = services.BuildServiceProvider();
-
-                    var login = new LoginForm(
-                        sp.GetRequiredService<ApiClient>(),
-                        sp.GetRequiredService<UsbCryptoService>(),
-                        null,
-                        sp.GetRequiredService<LogSyncService>());
-
-                    Application.Run(login);
+                    // Instalación: pide RP root, desbloquea unidad,
+                    // descifra .btlk-ip y persiste settings.dat
+                    (rpRoot, backendIp) = SetupFirstRunWithUsbRoot();
+                    SettingsStore.Save(rpRoot, backendIp);
                 }
-                catch (Exception ex)
+                else
                 {
-                    MessageBox.Show(
-                        "Error fatal al iniciar la aplicación:\n\n" + ex.ToString(),
-                        "Error crítico",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error
-                    );
+                    rpRoot = settings.Value.rpRoot;
+                    backendIp = settings.Value.backendIp;
                 }
+
+                //  RP_root queda disponible para todo el proceso
+                UsbCryptoService.RpRootGlobal = rpRoot;
+
+                /* ───────────── 2. DI container ───────────── */
+                var services = new ServiceCollection();
+                services.AddSingleton(new ApiClient(backendIp));
+                services.AddSingleton<UsbCryptoService>();
+                services.AddSingleton<LogSyncService>();
+
+                using var sp = services.BuildServiceProvider();
+
+                /* ───────────── 3. Arranca pantalla de login ───────────── */
+                var login = new LoginForm(
+                    sp.GetRequiredService<ApiClient>(),
+                    sp.GetRequiredService<UsbCryptoService>(),
+                    null,
+                    sp.GetRequiredService<LogSyncService>());
+
+                Application.Run(login);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error fatal al iniciar la aplicación:\n\n{ex}",
+                                "Error crítico", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Primer uso: pide RecoveryPassword root y extrae la IP del backend.
+        /// Flujo de instalación: pide RP_root, desbloquea la unidad ROOT,
+        /// descifra .btlk-ip y devuelve (rpRoot, backendIp).
         /// </summary>
         private static (string rpRoot, string backendIp) SetupFirstRunWithUsbRoot()
         {
             while (true)
             {
-                // 1️⃣ Detectar primer USB conectado (puede estar cifrado)
-                var usbList = UsbCryptoService.EnumerateUsbInfos();
-                if (usbList.Count == 0)
+                /* 1️⃣ Detectar primer USB */
+                var list = UsbCryptoService.EnumerateUsbInfos();
+                if (list.Count == 0)
                 {
-                    MessageBox.Show(
-                        "Conecta el USB root cifrado (con rusbp.sys y pki).",
-                        "USB root requerido",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
+                    MessageBox.Show("Conecta el USB ROOT cifrado (con rusbp.sys y pki).",
+                                    "USB root requerido", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     Thread.Sleep(1200);
                     continue;
                 }
-                var root = usbList.First().Roots.First();
-                var driveLetter = root.Substring(0, 2);
+                var rootPath = list.First().Roots.First();   // ej.  F:\
+                var driveLetter = rootPath[..2];               // “F:”
 
-                // 2️⃣ Pedir RecoveryPassword con UI bonita y validada
-                if (!Prompt.ForRecoveryPassword(out string recoveryPassword))
+                /* 2️⃣ Pedir RecoveryPassword bonito */
+                if (!Prompt.ForRecoveryPassword(out string rpRoot))
                 {
-                    MessageBox.Show("El RecoveryPassword es obligatorio para instalar.", "Operación cancelada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("El RecoveryPassword es obligatorio.",
+                                    "Operación cancelada", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     continue;
                 }
 
-                // 3️⃣ Intentar desbloquear BitLocker usando recoveryPass
-                if (!UsbCryptoService.UnlockBitLockerWithRecoveryPass(driveLetter, recoveryPassword))
+                /* 3️⃣ Desbloquear BitLocker con RP_root */
+                if (!UsbCryptoService.UnlockBitLockerWithRecoveryPass(driveLetter, rpRoot))
                 {
-                    MessageBox.Show("No se pudo desbloquear el USB root con ese RecoveryPassword. Intenta nuevamente.", "Error BitLocker", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No se pudo desbloquear la unidad con ese RecoveryPassword.",
+                                    "Error BitLocker", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
 
-                // 4️⃣ Esperar a que la unidad esté montada/accesible
-                string sysDir = Path.Combine(root, "rusbp.sys");
-                string pkiDir = Path.Combine(root, "pki");
-                int maxWaitMs = 18000, waited = 0, sleepMs = 1200;
-                while ((!Directory.Exists(sysDir) || !Directory.Exists(pkiDir)) && waited < maxWaitMs)
+                /* 4️⃣ Esperar montaje */
+                string sysDir = Path.Combine(rootPath, "rusbp.sys");
+                string pkiDir = Path.Combine(rootPath, "pki");
+                int waited = 0;
+                while ((!Directory.Exists(sysDir) || !Directory.Exists(pkiDir)) && waited < 18_000)
                 {
-                    Thread.Sleep(sleepMs);
-                    waited += sleepMs;
+                    Thread.Sleep(1200);
+                    waited += 1200;
                 }
                 if (!Directory.Exists(sysDir) || !Directory.Exists(pkiDir))
                 {
-                    MessageBox.Show("No se detecta la estructura después de desbloquear. Revisa que el USB esté montado y accesible.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Estructura no encontrada tras el unlock.",
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
 
-                // 5️⃣ Extraer y validar la IP del backend desde el archivo cifrado
+                /* 5️⃣ Descifrar .btlk-ip → backendIp */
                 string btlkIpPath = Path.Combine(sysDir, ".btlk-ip");
-                string backendIp = CryptoHelper.DecryptBtlkIp(btlkIpPath, recoveryPassword);
-
+                string backendIp = CryptoHelper.DecryptBtlkIp(btlkIpPath, rpRoot);
                 if (string.IsNullOrWhiteSpace(backendIp))
                 {
-                    MessageBox.Show("No se pudo leer la IP del backend desde el USB root. Asegúrate de ingresar la clave correcta.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("No se pudo leer la IP del backend. RP_root incorrecto?",
+                                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     continue;
                 }
 
-                MessageBox.Show("IP del backend guardada exitosamente: " + backendIp, "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return (recoveryPassword, backendIp.Trim());
+                MessageBox.Show($"IP del backend guardada: {backendIp}",
+                                "Instalación OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return (rpRoot, backendIp.Trim());
             }
         }
     }

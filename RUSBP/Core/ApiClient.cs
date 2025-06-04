@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -68,31 +69,24 @@ namespace RUSBP.Core
         }
 
         // ---- NUEVO ----
-        public class RecoverUsbResponse
-        {
-            public string Cipher { get; set; } = "";
-            public string Tag { get; set; } = "";
-            public int Rol { get; set; }
-        }
+        public record RecoverUsbResponse(bool Ok, string? Err,
+                                         string CipherB64, string TagB64);
 
-        public async Task<RecoverUsbResponse?> RecoverUsbAsync(string serial, int agentType)
+        public async Task<RecoverUsbResponse> RecoverUsbAsync(string serial, int agentType)
         {
-            try
+            var body = new { serial, agentType };
+            var resp = await _http.PostAsJsonAsync("api/usb/recover", body);
+
+            if (!resp.IsSuccessStatusCode)
             {
-                var res = await _http.PostAsJsonAsync("api/usb/recover", new { serial, agentType });
-                if (!res.IsSuccessStatusCode)
-                {
-                    LogDebug($"[RecoverUsb] Respuesta inválida: {(int)res.StatusCode}");
-                    return null;
-                }
-                var json = await res.Content.ReadFromJsonAsync<RecoverUsbResponse>();
-                return json;
+                string err = await resp.Content.ReadAsStringAsync();
+                return new RecoverUsbResponse(false, err, "", "");
             }
-            catch (Exception ex)
-            {
-                LogDebug($"[RecoverUsb] ERROR CONEXION: {ex.Message}");
-                return null;
-            }
+
+            var json = await resp.Content.ReadFromJsonAsync<JsonElement>();
+            string cipherB64 = json!.GetProperty("cipher").GetString()!;
+            string tagB64 = json.GetProperty("tag").GetString()!;
+            return new RecoverUsbResponse(true, null, cipherB64, tagB64);
         }
 
         // --- LOGS Y OTROS MÉTODOS SE MANTIENEN IGUAL ---
@@ -127,5 +121,27 @@ namespace RUSBP.Core
             }
             catch { /* swallow */ }
         }
+        public async Task<(bool ok, string? err,
+                   string cipherB64, string tagB64)>
+        RecoverUsbAsync(string serial, int agentType = 2,
+                        CancellationToken ct = default)
+        {
+            var json = new { serial, agentType };
+            var resp = await _http.PostAsJsonAsync("api/usb/recover", json, ct);
+
+            var body = await resp.Content.ReadAsStringAsync(ct);
+            if (resp.IsSuccessStatusCode)
+            {
+                var j = JsonSerializer.Deserialize<JsonElement>(body);
+                return (true, null,
+                        j.GetProperty("cipher").GetString()!,
+                        j.GetProperty("tag").GetString()!);
+            }
+            return (false,
+                    body.Length > 200 ? resp.StatusCode.ToString() : body,
+                    "", "");
+        }
+
+
     }
 }

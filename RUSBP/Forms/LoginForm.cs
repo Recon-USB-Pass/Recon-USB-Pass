@@ -187,59 +187,83 @@ namespace RUSBP.Forms
             if (_btnLogout != null) _btnLogout.Visible = false;
         }
 
-        /* ========== Verificación backend ========= */
+        /* ========== Verificación + Recover + Unlock ========= */
         private async Task BeginVerificationAsync()
         {
-            // --- ESPERA robusta por USB montado y desbloqueado ---
-            while (true)
+            /* 1️⃣  Esperar a que al menos un USB aparezca (montado o bloqueado) */
+            while (UsbCryptoService.EnumerateUsbInfos().Count == 0)
+                await Task.Delay(800);
+
+            /* 2️⃣  Tomar el PRIMER dispositivo USB visto (puedes refinar si usas varios) */
+            var info = UsbCryptoService.EnumerateUsbInfos().First();
+            _serial = info.Serial.ToUpperInvariant();
+            string root = info.Roots.First();      // p. ej. “F:\”
+            string rootVol = root[..2];               // “F:”
+
+            /* 3️⃣  Si el volumen está BLOQUEADO → recover + unlock con BitLocker */
+            if (BitLockerStatus.IsLocked(rootVol))
             {
-                var usbVolumes = UsbCryptoService.EnumerateUsbInfos();
-                bool anyMounted = usbVolumes.Any(v => v.Roots.Any(r => Directory.Exists(r)));
-                if (usbVolumes.Count == 0 || !anyMounted)
+                // 3.a ── pedir al backend cipher+tag usando /api/usb/recover
+                var resp = await _api.RecoverUsbAsync(_serial, 2 /*AgentType = Employee*/);
+
+                if (!resp.Ok)
                 {
-                    MessageBox.Show(
-                        "Inserte el USB de seguridad y desbloquéelo con BitLocker antes de continuar.\n\n" +
-                        "Abra el Explorador de archivos, haga clic derecho en la unidad USB y seleccione 'Desbloquear'.",
-                        "USB cifrado o no conectado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    await Task.Delay(1000); // da tiempo a que el usuario haga la acción
-                    continue; // sigue esperando hasta que esté montado
+                    MessageBox.Show(resp.Err ?? "Error en recover-usb", "Backend",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
-                break;
+
+                // 3.b ── descifrar RecoveryPassword   TAG(16) || CIPHER(n)
+                byte[] tagCipher = Convert.FromBase64String(resp.TagB64)
+                                 .Concat(Convert.FromBase64String(resp.CipherB64)).ToArray();
+
+                string recPass = CryptoHelper.DecryptToString(
+                                     tagCipher,
+                                     UsbCryptoService.RpRootGlobal!); // RP_root almacenada
+
+                // 3.c ── desbloquear la unidad con manage-bde (silencioso)
+                if (!UsbCryptoService.UnlockBitLockerWithRecoveryPass(rootVol, recPass))
+                {
+                    MessageBox.Show("No se pudo desbloquear la unidad BitLocker.",
+                                    "BitLocker", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // pequeña espera hasta que Windows monte el volumen
+                await Task.Delay(2500);
             }
 
-            // --- Detectar estructura de USB válida ---
+            /* 4️⃣  Ya desbloqueada → localizar estructura /pki y leer el certificado */
             if (!_usb.TryLocateUsb())
             {
-                MessageBox.Show("No se detecta la estructura válida del USB de seguridad.", "USB inválido", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                _watcher.SetVerified(false);
+                MessageBox.Show("Estructura /pki no encontrada tras el unlock.",
+                                "USB inválido", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            _serial = _usb.Serial!;
-            string certPath = Path.Combine(_usb.MountedRoot!, "pki", "cert.crt");
-            string keyPath = Path.Combine(_usb.MountedRoot!, "pki", "priv.key");
-            string sysDir = Path.Combine(_usb.MountedRoot!, "rusbp.sys");
+            string certPem = File.ReadAllText(Path.Combine(_usb.MountedRoot!, "pki", "cert.crt"));
 
-            // --- Alerta si es ROOT ---
-            if (File.Exists(Path.Combine(sysDir, ".btlk")) && File.Exists(Path.Combine(sysDir, ".btlk-agente")))
-            {
-                MessageBox.Show("¡ADVERTENCIA!\nSe ha detectado un USB ROOT. Úselo solo para tareas de administración.",
-                                "Aviso de seguridad", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            string certPem = File.ReadAllText(certPath);
+            /* 5️⃣  verify-usb → obtengo challenge */
             _challenge = await _api.VerifyUsbAsync(_serial, certPem);
-            if (_challenge == null)
+            if (_challenge is null)
             {
-                _lblStatus.Text = "Sin conexión al servidor. Reintentando...";
+                _lblStatus.Text = "Sin conexión… reintento";
                 _lblStatus.ForeColor = Color.OrangeRed;
                 ProgramarReintentoVerificacion();
                 return;
             }
 
+            /* 6️⃣  Todo OK → habilitar PIN */
             _watcher.SetVerified(true);
-            DetenerReintentoVerificacion();
+            _lblStatus.Text = "Unidad lista – ingrese PIN";
+            _lblStatus.ForeColor = Color.LimeGreen;
+            _txtPin.Enabled = true;
+            _btnLogin.Enabled = true;
+            _txtPin.Focus();
         }
+
+
+
 
         private void ProgramarReintentoVerificacion()
         {

@@ -22,28 +22,45 @@ namespace RUSBP.Core
                 {
                     string pkiDir = Path.Combine(root, "pki");
 
+                    /* ───── 1. ¿La unidad aún está cifrada? ───── */
                     if (!Directory.Exists(pkiDir))
                     {
-                        string driveLetter = root.Substring(0, 2);
-                        if (!Prompt.ForRecoveryPassword(out string recoveryPass))
-                            continue;
+                        string driveLetter = root[..2]; // “F:”
 
-                        if (!UnlockBitLockerWithRecoveryPass(driveLetter, recoveryPass))
+                        /* 1-a) Si YA tenemos la RP_root global => intentar unlock silencioso */
+                        if (!string.IsNullOrWhiteSpace(RpRootGlobal) &&
+                            UnlockBitLockerWithRecoveryPass(driveLetter, RpRootGlobal))
                         {
-                            MessageBox.Show("No se pudo desbloquear el USB root. Intenta nuevamente.", "Error BitLocker", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            continue;
+                            // damos tiempo a Windows a montar el volumen
+                            Thread.Sleep(2500);
+                            if (!Directory.Exists(pkiDir)) continue;
                         }
-                        System.Threading.Thread.Sleep(2500);
-                        if (!Directory.Exists(pkiDir))
-                            continue;
+                        /* 1-b) Solo si no hay RpRootGlobal -> pedirla al usuario */
+                        else
+                        {
+                            if (!Prompt.ForRecoveryPassword(out string rp))
+                                continue;                               // canceló
+
+                            RpRootGlobal = rp;                         // cache global
+                            if (!UnlockBitLockerWithRecoveryPass(driveLetter, rp))
+                            {
+                                MessageBox.Show("No se pudo desbloquear el USB.",
+                                    "Error BitLocker", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                continue;
+                            }
+                            Thread.Sleep(2500);
+                            if (!Directory.Exists(pkiDir)) continue;
+                        }
                     }
 
+                    /* ───── 2. Estructura OK: asignar campos y salir ───── */
                     string sysDir = Path.Combine(root, "rusbp.sys");
-                    bool hasRootKeys = File.Exists(Path.Combine(sysDir, ".btlk")) && File.Exists(Path.Combine(sysDir, ".btlk-agente"));
+                    bool hasRoot = File.Exists(Path.Combine(sysDir, ".btlk")) &&
+                                   File.Exists(Path.Combine(sysDir, ".btlk-agente"));
 
                     Serial = info.Serial.ToUpperInvariant();
                     MountedRoot = root;
-                    IsRoot = hasRootKeys;
+                    IsRoot = hasRoot;
                     return true;
                 }
             }
@@ -51,6 +68,7 @@ namespace RUSBP.Core
             IsRoot = false;
             return false;
         }
+
 
         public string LoadCertPem()
             => File.ReadAllText(Path.Combine(MountedRoot!, "pki", "cert.crt"));
@@ -154,5 +172,8 @@ namespace RUSBP.Core
             byte[] sig = rsa.SignData(challenge, System.Security.Cryptography.HashAlgorithmName.SHA256, System.Security.Cryptography.RSASignaturePadding.Pkcs1);
             return Convert.ToBase64String(sig);
         }
+        // Contiene el RP_root descifrado (lo setea Program.cs al arrancar)
+        public static string? RpRootGlobal { get; set; }
+
     }
 }
